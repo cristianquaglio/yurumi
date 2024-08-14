@@ -1,0 +1,38 @@
+version: '3.1'
+
+services:
+  auth:
+    build:
+      context: .
+      dockerfile: ./apps/auth/Dockerfile
+      target: development
+    command: yarn run start:dev auth
+    env_file:
+      - ./apps/auth/.env
+    ports:
+      - '7001:7001'
+    volumes:
+      - .:/usr/src/app
+    restart: always
+    depends_on:
+      - db
+  notifications:
+    build:
+      context: .
+      dockerfile: ./apps/notifications/Dockerfile
+      target: development
+    command: yarn run start:dev notifications
+    env_file:
+      - ./apps/notifications/.env
+    volumes:
+      - .:/usr/src/app
+    restart: always
+  db:
+    image: mongo:latest
+    volumes:
+      - mongo:/data/db
+    ports:
+      - '27017:27017'
+    restart: always
+volumes:
+  mongo:
