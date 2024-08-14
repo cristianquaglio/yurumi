@@ -12,6 +12,7 @@ import { LoggerModule } from '@app/common';
 // import { UserModule } from './user/user.module';
 // import { DependenceModule } from './dependence/dependence.module';
 // import { JwtStrategy, LocalStrategy } from './strategies';
+import { UsersModule } from './users/users.module';
 
 @Module({
   imports: [
@@ -56,6 +57,7 @@ import { LoggerModule } from '@app/common';
     // }),
     // UserModule,
     DependencesModule,
+    UsersModule,
   ],
   controllers: [AuthController],
   // providers: [AuthService, JwtStrategy, LocalStrategy],
