@@ -9,7 +9,7 @@ import {
   IsStrongPassword,
 } from 'class-validator';
 
-import { UserRoles } from '@app/common';
+import { RestrictedRoles, UserRoles } from '@app/common';
 
 export class CreateUserDto {
   @IsString()
@@ -31,7 +31,7 @@ export class CreateUserDto {
   password: string;
 
   @IsArray()
-  @IsEnum(UserRoles, { each: true })
+  @IsEnum(RestrictedRoles, { each: true })
   @ArrayMinSize(1)
-  roles: UserRoles[];
+  roles: RestrictedRoles[] | UserRoles[];
 }

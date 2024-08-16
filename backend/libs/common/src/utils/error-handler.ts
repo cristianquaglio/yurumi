@@ -1,7 +1,6 @@
 import { BadRequestException, NotFoundException } from '@nestjs/common';
 
 export const errorHandler = (error: any) => {
-  console.log('error ==> ', error?.name);
   if (error?.code === 11000)
     throw new BadRequestException({
       statusCode: 401,

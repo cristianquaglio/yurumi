@@ -13,6 +13,8 @@ import { LoggerModule } from '@app/common';
 // import { DependenceModule } from './dependence/dependence.module';
 // import { JwtStrategy, LocalStrategy } from './strategies';
 import { UsersModule } from './users/users.module';
+import { UsersService } from './users/users.service';
+import { UsersRepository } from './users/users.repository';
 
 @Module({
   imports: [
@@ -61,6 +63,6 @@ import { UsersModule } from './users/users.module';
   ],
   controllers: [AuthController],
   // providers: [AuthService, JwtStrategy, LocalStrategy],
-  providers: [AuthService],
+  providers: [AuthService, UsersService],
 })
 export class AuthModule {}

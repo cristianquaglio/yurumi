@@ -1,19 +1,15 @@
-import { Injectable, Query } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 
 import { UserStatus } from '@app/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { ICreateUserPayload } from './interfaces/create-user-payload.interface';
 import { UsersRepository } from './users.repository';
 
 @Injectable()
 export class UsersService {
   constructor(private readonly usersRepository: UsersRepository) {}
 
-  async create(
-    @Query() { dependence }: ICreateUserPayload,
-    createUserDto: CreateUserDto,
-  ) {
+  async create(dependence: string, createUserDto: CreateUserDto) {
     return await this.usersRepository.create({
       ...createUserDto,
       dependence,
@@ -29,6 +25,15 @@ export class UsersService {
 
   async findOne(_id: string) {
     return await this.usersRepository.findOne({ _id });
+  }
+
+  async dependenceHasUsers(dependence: string) {
+    try {
+      await this.usersRepository.findOne({ dependence });
+    } catch (error) {
+      if (error?.response?.statusCode === 404) return false;
+    }
+    return true;
   }
 
   async update(_id: string, updateUserDto: UpdateUserDto) {
