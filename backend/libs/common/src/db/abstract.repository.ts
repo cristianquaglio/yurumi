@@ -2,18 +2,15 @@ import { BadRequestException, Logger, NotFoundException } from '@nestjs/common';
 import { FilterQuery, Model, Types, UpdateQuery } from 'mongoose';
 
 import { AbstractDocument } from './abstract.schema';
+import { errorHandler } from '../utils';
+
 
 export abstract class AbstractRepository<TDocument extends AbstractDocument> {
   protected abstract readonly logger: Logger;
 
   constructor(protected readonly model: Model<TDocument>) {}
 
-  async create(
-    document: Omit<
-      TDocument,
-      '_id' | 'isPasswordChanged' | 'refreshToken' | 'status'
-    >,
-  ): Promise<TDocument> {
+  async create(document: Omit<TDocument, '_id'>): Promise<TDocument> {
     const createdDocument = new this.model({
       ...document,
       _id: new Types.ObjectId(),
@@ -21,11 +18,7 @@ export abstract class AbstractRepository<TDocument extends AbstractDocument> {
     try {
       return (await createdDocument.save()).toJSON() as unknown as TDocument;
     } catch (error) {
-      if (error?.code === 11000)
-        throw new BadRequestException({
-          statusCode: 401,
-          message: `Duplicated data in database`,
-        });
+      errorHandler(error);
     }
   }
 
@@ -43,9 +36,7 @@ export abstract class AbstractRepository<TDocument extends AbstractDocument> {
       }
       return document;
     } catch (error) {
-      console.log(error);
-      if (error?.name === 'CastError')
-        throw new NotFoundException('Related field does not exist');
+      errorHandler(error);
       throw new NotFoundException('Document was not found');
     }
   }
@@ -73,6 +64,13 @@ export abstract class AbstractRepository<TDocument extends AbstractDocument> {
   async findOneAndDelete(
     filterQuery: FilterQuery<TDocument>,
   ): Promise<TDocument> {
-    return this.model.findOneAndDelete(filterQuery).lean<TDocument>(true);
+    const document = await this.model
+      .findOneAndDelete(filterQuery)
+      .lean<TDocument>(true);
+    if (!document) {
+      this.logger.warn('Document was not found with filterQuery', filterQuery);
+      throw new NotFoundException('Document was not found');
+    }
+    return document;
   }
 }

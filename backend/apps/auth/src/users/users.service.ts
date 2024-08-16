@@ -1,4 +1,6 @@
 import { Injectable, Query } from '@nestjs/common';
+
+import { UserStatus } from '@app/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { ICreateUserPayload } from './interfaces/create-user-payload.interface';
@@ -12,22 +14,31 @@ export class UsersService {
     @Query() { dependence }: ICreateUserPayload,
     createUserDto: CreateUserDto,
   ) {
-    return await this.usersRepository.create({ ...createUserDto, dependence });
+    return await this.usersRepository.create({
+      ...createUserDto,
+      dependence,
+      status: UserStatus.EMAIL_ACTIVATION_PENDING,
+      isPasswordChanged: false,
+      refreshToken: undefined,
+    });
   }
 
-  findAll() {
-    return `This action returns all users`;
+  async findAll() {
+    return await this.usersRepository.find({});
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} user`;
+  async findOne(_id: string) {
+    return await this.usersRepository.findOne({ _id });
   }
 
-  update(id: number, updateUserDto: UpdateUserDto) {
-    return `This action updates a #${id} user`;
+  async update(_id: string, updateUserDto: UpdateUserDto) {
+    return await this.usersRepository.findOneAndUpdate(
+      { _id },
+      { $set: updateUserDto },
+    );
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} user`;
+  async remove(_id: string) {
+    return await this.usersRepository.findOneAndDelete({ _id });
   }
 }
