@@ -4,17 +4,13 @@ import { JwtModule } from '@nestjs/jwt';
 import { ClientsModule, Transport } from '@nestjs/microservices';
 import * as Joi from 'joi';
 
-// import { LoggerModule, NOTIFICATIONS_SERVICE } from '@app/common';
+import { LoggerModule, NOTIFICATIONS_SERVICE } from '@app/common';
 import { AuthService } from './auth.service';
 import { AuthController } from './auth.controller';
 import { DependencesModule } from './dependences/dependences.module';
-import { LoggerModule } from '@app/common';
-// import { UserModule } from './user/user.module';
-// import { DependenceModule } from './dependence/dependence.module';
-// import { JwtStrategy, LocalStrategy } from './strategies';
 import { UsersModule } from './users/users.module';
 import { UsersService } from './users/users.service';
-import { UsersRepository } from './users/users.repository';
+import { JwtStrategy, LocalStrategy } from './strategies';
 
 @Module({
   imports: [
@@ -35,34 +31,32 @@ import { UsersRepository } from './users/users.repository';
       }),
       envFilePath: './apps/auth/.env',
     }),
-    // ClientsModule.registerAsync([
-    //   {
-    //     name: NOTIFICATIONS_SERVICE,
-    //     useFactory: (configService: ConfigService) => ({
-    //       transport: Transport.TCP,
-    //       options: {
-    //         host: configService.get('NOTIFICATIONS_HOST'),
-    //         port: configService.get('NOTIFICATIONS_PORT'),
-    //       },
-    //     }),
-    //     inject: [ConfigService],
-    //   },
-    // ]),
-    // JwtModule.registerAsync({
-    //   useFactory: (configService: ConfigService) => ({
-    //     secret: configService.get<string>('JWT_SECRET'),
-    //     signOptions: {
-    //       expiresIn: `${configService.get('JWT_EXPIRATION')}s`,
-    //     },
-    //   }),
-    //   inject: [ConfigService],
-    // }),
-    // UserModule,
+    ClientsModule.registerAsync([
+      {
+        name: NOTIFICATIONS_SERVICE,
+        useFactory: (configService: ConfigService) => ({
+          transport: Transport.TCP,
+          options: {
+            host: configService.get('NOTIFICATIONS_HOST'),
+            port: configService.get('NOTIFICATIONS_PORT'),
+          },
+        }),
+        inject: [ConfigService],
+      },
+    ]),
+    JwtModule.registerAsync({
+      useFactory: (configService: ConfigService) => ({
+        secret: configService.get<string>('JWT_SECRET'),
+        signOptions: {
+          expiresIn: `${configService.get('JWT_EXPIRATION')}s`,
+        },
+      }),
+      inject: [ConfigService],
+    }),
     DependencesModule,
     UsersModule,
   ],
   controllers: [AuthController],
-  // providers: [AuthService, JwtStrategy, LocalStrategy],
-  providers: [AuthService, UsersService],
+  providers: [AuthService, UsersService, JwtStrategy, LocalStrategy],
 })
 export class AuthModule {}

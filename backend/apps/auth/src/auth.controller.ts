@@ -1,8 +1,11 @@
-import { Body, Controller, Post, Query } from '@nestjs/common';
+import { Body, Controller, Get, Post, Query } from '@nestjs/common';
 
 import { AuthService } from './auth.service';
 import { CreateUserDto } from './users/dto/create-user.dto';
-import { ICreateUserPayload } from './users/interfaces';
+import {
+  ICreateUserPayload,
+  IEmailActivationPayload,
+} from './users/interfaces';
 
 @Controller('auth')
 export class AuthController {
@@ -13,6 +16,11 @@ export class AuthController {
     @Query() createUserPayload: ICreateUserPayload,
     @Body() createUserDto: CreateUserDto,
   ) {
-    this.authService.signup(createUserPayload, createUserDto);
+    return this.authService.signup(createUserPayload, createUserDto);
+  }
+
+  @Get('email-activation')
+  emailActivation(@Query() emailActivationPayload: IEmailActivationPayload) {
+    return this.authService.emailActivation(emailActivationPayload);
   }
 }
