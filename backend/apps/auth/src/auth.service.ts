@@ -10,6 +10,7 @@ import {
   ICreateUserPayload,
   IEmailActivationPayload,
 } from './users/interfaces';
+import { Response } from 'express';
 
 @Injectable()
 export class AuthService {
@@ -66,6 +67,21 @@ export class AuthService {
     const email = await this.extractEmailFromToken(token);
     const user = await this.usersService.activateEmail(email);
     if (user) return { statusCode: 200, message: 'User email confirmated' };
+  }
+
+  async login(user: UserDocument, response: Response) {
+    const tokenPayload = {
+      userId: user._id.toHexString(),
+    };
+    const expires = new Date();
+    expires.setSeconds(
+      expires.getSeconds() + this.configService.get<number>('JWT_EXPIRATION'),
+    );
+    const token = this.jwtService.sign(tokenPayload);
+    response.cookie('Authentication', token, {
+      httpOnly: true,
+      expires,
+    });
   }
 
   private async extractEmailFromToken(token: string) {
