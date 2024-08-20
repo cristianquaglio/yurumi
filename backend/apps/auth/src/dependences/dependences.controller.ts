@@ -6,8 +6,10 @@ import {
   Patch,
   Param,
   Delete,
+  UseGuards,
 } from '@nestjs/common';
 
+import { JwtAuthGuard, Roles, UserRoles } from '@app/common';
 import { DependencesService } from './dependences.service';
 import { CreateDependenceDto } from './dto/create-dependence.dto';
 import { UpdateDependenceDto } from './dto/update-dependence.dto';
@@ -31,6 +33,8 @@ export class DependencesController {
     return this.dependencesService.findOne(id);
   }
 
+  @UseGuards(JwtAuthGuard)
+  @Roles(UserRoles.SA)
   @Patch(':id')
   update(
     @Param('id') id: string,
@@ -39,6 +43,8 @@ export class DependencesController {
     return this.dependencesService.update(id, updateDependenceDto);
   }
 
+  @UseGuards(JwtAuthGuard)
+  @Roles(UserRoles.SA)
   @Delete(':id')
   remove(@Param('id') id: string) {
     return this.dependencesService.remove(id);

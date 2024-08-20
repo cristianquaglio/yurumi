@@ -1,6 +1,8 @@
 import { Module } from '@nestjs/common';
+import { ClientsModule, Transport } from '@nestjs/microservices';
+import { ConfigService } from '@nestjs/config';
 
-import { DatabaseModule } from '@app/common';
+import { AUTH_SERVICE, DatabaseModule } from '@app/common';
 import { DependencesService } from './dependences.service';
 import { DependencesController } from './dependences.controller';
 import { DependenceDocument, DependenceSchema } from './models';
@@ -13,6 +15,19 @@ import { DependenceRepository } from './dependence.repository';
       {
         name: DependenceDocument.name,
         schema: DependenceSchema,
+      },
+    ]),
+    ClientsModule.registerAsync([
+      {
+        name: AUTH_SERVICE,
+        useFactory: (configService: ConfigService) => ({
+          transport: Transport.TCP,
+          options: {
+            host: configService.get('AUTH_SERVICE'),
+            port: configService.get('TCP_PORT'),
+          },
+        }),
+        inject: [ConfigService],
       },
     ]),
   ],
