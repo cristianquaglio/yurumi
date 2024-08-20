@@ -50,12 +50,12 @@ export class UsersService {
     );
   }
 
-  async findAll() {
-    return await this.usersRepository.find({});
+  async findAll(dependence: string) {
+    return await this.usersRepository.find({ dependence });
   }
 
-  async findOne(_id: string) {
-    return await this.usersRepository.findOne({ _id });
+  async findOne(_id: string, dependence: string) {
+    return await this.usersRepository.findOne({ _id, dependence });
   }
 
   async dependenceHasUsers(dependence: string) {
@@ -67,14 +67,14 @@ export class UsersService {
     return true;
   }
 
-  async update(_id: string, updateUserDto: UpdateUserDto) {
+  async update(_id: string, updateUserDto: UpdateUserDto, dependence: string) {
     return await this.usersRepository.findOneAndUpdate(
-      { _id },
+      { _id, dependence },
       { $set: updateUserDto },
     );
   }
 
-  async remove(_id: string) {
-    return await this.usersRepository.findOneAndDelete({ _id });
+  async remove(_id: string, dependence: string) {
+    return await this.usersRepository.findOneAndDelete({ _id, dependence });
   }
 }
