@@ -40,7 +40,13 @@ export class UsersService {
     const passwordIsValid = await bcrypt.compare(password, user.password);
     if (!passwordIsValid)
       throw new UnauthorizedException('Credentials are not valid.');
+    if (user.status !== UserStatus.ACTIVE)
+      throw new UnauthorizedException(`User is not active`);
     return user;
+  }
+
+  async refreshToken(_id: string, refreshToken: string) {
+    await this.usersRepository.findOneAndUpdate({ _id }, { refreshToken });
   }
 
   async activateEmail(email: string) {

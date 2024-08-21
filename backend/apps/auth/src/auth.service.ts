@@ -22,6 +22,8 @@ export class AuthService {
     private readonly configService: ConfigService,
   ) {}
 
+  private SALT: number = 10;
+
   async signup(
     createUserPayload: ICreateUserPayload,
     createUserDto: CreateUserDto,
@@ -70,22 +72,49 @@ export class AuthService {
   }
 
   async login(user: UserDocument, response: Response) {
-    const tokenPayload = {
-      userId: user._id.toHexString(),
-    };
-    const expires = new Date();
-    expires.setSeconds(
-      expires.getSeconds() + this.configService.get<number>('JWT_EXPIRATION'),
-    );
-    const token = this.jwtService.sign(tokenPayload);
-    response.cookie('Authentication', token, {
-      httpOnly: true,
-      expires,
-    });
+    const refreshToken = await this.generateTokens(user, response);
+    await this.usersService.refreshToken(user._id.toString(), refreshToken);
   }
 
   async changePassword(_id: string, changePasswordDto: ChangePasswordDto) {
     return await this.usersService.changePassword(_id, changePasswordDto);
+  }
+
+  async refreshTokens(_id: string, response: Response) {
+    const user = await this.usersService.getUser({ _id });
+    const refreshToken = await this.generateTokens(user, response);
+    await this.usersService.refreshToken(user._id.toString(), refreshToken);
+    return { statusCode: 204, message: 'Refresh token done' };
+  }
+
+  private async generateTokens(user: UserDocument, response: Response) {
+    const tokenPayload = {
+      userId: user._id.toHexString(),
+    };
+    const refreshTokenPayload = {
+      userId: user._id.toHexString(),
+    };
+    const tokenExpiration = new Date();
+    tokenExpiration.setSeconds(
+      tokenExpiration.getSeconds() +
+        this.configService.get<number>('JWT_EXPIRATION'),
+    );
+    const refreshTokenExpiration = new Date();
+    refreshTokenExpiration.setSeconds(
+      refreshTokenExpiration.getSeconds() +
+        this.configService.get<number>('JWT_REFRESH_EXPIRATION'),
+    );
+    const token = this.jwtService.sign(tokenPayload);
+    const refreshToken = this.jwtService.sign(refreshTokenPayload);
+    response.cookie('Authentication', token, {
+      httpOnly: true,
+      expires: tokenExpiration,
+    });
+    response.cookie('RefreshToken', refreshToken, {
+      httpOnly: true,
+      expires: refreshTokenExpiration,
+    });
+    return refreshToken;
   }
 
   private async extractEmailFromToken(token: string) {

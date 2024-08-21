@@ -20,6 +20,7 @@ import {
 } from './users/interfaces';
 import { LocalAuthGuard } from './guards/local-auth.guard';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
+import { RefreshTokenGuard } from './guards/refresh-token.guard';
 
 @Controller('auth')
 export class AuthController {
@@ -58,6 +59,15 @@ export class AuthController {
       request.user['_id'],
       changePasswordDto,
     );
+  }
+
+  @UseGuards(RefreshTokenGuard)
+  @Get('refresh')
+  refreshTokens(
+    @Req() request: Request,
+    @Res({ passthrough: true }) response: Response,
+  ) {
+    return this.authService.refreshTokens(request.user['_id'], response);
   }
 
   @UseGuards(JwtAuthGuard)
