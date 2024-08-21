@@ -7,9 +7,8 @@ import * as Joi from 'joi';
 import { LoggerModule, NOTIFICATIONS_SERVICE } from '@app/common';
 import { AuthService } from './auth.service';
 import { AuthController } from './auth.controller';
-import { DependencesModule } from './dependences/dependences.module';
-import { UsersModule } from './users/users.module';
-import { UsersService } from './users/users.service';
+import { DependencesModule } from './dependences';
+import { UsersModule, UsersService } from './users';
 import { JwtStrategy, LocalStrategy } from './strategies';
 
 @Module({

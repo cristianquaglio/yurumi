@@ -11,8 +11,7 @@ import {
 
 import { JwtAuthGuard, Roles, UserRoles } from '@app/common';
 import { DependencesService } from './dependences.service';
-import { CreateDependenceDto } from './dto/create-dependence.dto';
-import { UpdateDependenceDto } from './dto/update-dependence.dto';
+import { CreateDependenceDto, UpdateDependenceDto } from './dto';
 
 @Controller('dependences')
 export class DependencesController {

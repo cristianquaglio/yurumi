@@ -13,14 +13,13 @@ import { MessagePattern, Payload } from '@nestjs/microservices';
 
 import { CurrentUSer, UserDocument } from '@app/common';
 import { AuthService } from './auth.service';
-import { CreateUserDto, ChangePasswordDto } from './users/dto';
 import {
+  ChangePasswordDto,
+  CreateUserDto,
   ICreateUserPayload,
   IEmailActivationPayload,
-} from './users/interfaces';
-import { LocalAuthGuard } from './guards/local-auth.guard';
-import { JwtAuthGuard } from './guards/jwt-auth.guard';
-import { RefreshTokenGuard } from './guards/refresh-token.guard';
+} from './users';
+import { JwtAuthGuard, LocalAuthGuard, RefreshTokenGuard } from './guards';
 
 @Controller('auth')
 export class AuthController {

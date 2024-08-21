@@ -5,12 +5,13 @@ import { ConfigService } from '@nestjs/config';
 import { ClientProxy } from '@nestjs/microservices';
 
 import { NOTIFICATIONS_SERVICE, UserDocument, UserRoles } from '@app/common';
-import { CreateUserDto, ChangePasswordDto } from './users/dto';
-import { UsersService } from './users/users.service';
 import {
+  ChangePasswordDto,
+  CreateUserDto,
   ICreateUserPayload,
   IEmailActivationPayload,
-} from './users/interfaces';
+  UsersService,
+} from './users';
 
 @Injectable()
 export class AuthService {

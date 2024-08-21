@@ -1,8 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
-import { CreateDependenceDto } from './dto/create-dependence.dto';
-import { UpdateDependenceDto } from './dto/update-dependence.dto';
 import { DependenceRepository } from './dependence.repository';
+import { CreateDependenceDto, UpdateDependenceDto } from './dto';
 
 @Injectable()
 export class DependencesService {

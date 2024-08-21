@@ -7,7 +7,7 @@ import {
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
 
-import { UsersService } from '../users/users.service';
+import { UsersService } from '../users';
 
 @Injectable()
 export class RefreshTokenGuard implements CanActivate {
