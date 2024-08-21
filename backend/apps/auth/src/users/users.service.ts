@@ -5,11 +5,14 @@ import {
 } from '@nestjs/common';
 import * as bcrypt from 'bcryptjs';
 
-import { UserStatus } from '@app/common';
-import { CreateUserDto } from './dto/create-user.dto';
-import { UpdateUserDto } from './dto/update-user.dto';
+import { errorHandler, UserStatus } from '@app/common';
+import {
+  CreateUserDto,
+  UpdateUserDto,
+  GetUserDto,
+  ChangePasswordDto,
+} from './dto';
 import { UsersRepository } from './users.repository';
-import { GetUserDto } from './dto/get-user.dto';
 
 @Injectable()
 export class UsersService {
@@ -50,6 +53,28 @@ export class UsersService {
     );
   }
 
+  async changePassword(_id: string, changePasswordDto: ChangePasswordDto) {
+    const { password } = changePasswordDto;
+    const user = await this.usersRepository.findOne({ _id });
+    if (user.status !== UserStatus.ACTIVE)
+      throw new BadRequestException(`User is not active`);
+    if (await bcrypt.compare(password, user.password))
+      throw new BadRequestException(`Password can't be the same one`);
+    try {
+      return await this.usersRepository.findOneAndUpdate(
+        { _id },
+        {
+          $set: {
+            password: await bcrypt.hash(password, this.SALT),
+            isPasswordChanged: true,
+          },
+        },
+      );
+    } catch (error) {
+      errorHandler(error);
+    }
+  }
+
   async findAll(dependence: string) {
     return await this.usersRepository.find({ dependence });
   }
@@ -67,7 +92,11 @@ export class UsersService {
     return true;
   }
 
-  async update(_id: string, updateUserDto: UpdateUserDto, dependence: string) {
+  async update(
+    _id: string,
+    updateUserDto: UpdateUserDto,
+    dependence = undefined,
+  ) {
     return await this.usersRepository.findOneAndUpdate(
       { _id, dependence },
       { $set: updateUserDto },

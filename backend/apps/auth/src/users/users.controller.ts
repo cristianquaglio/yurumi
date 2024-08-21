@@ -18,7 +18,7 @@ import {
   UserRoles,
 } from '@app/common';
 import { UsersService } from './users.service';
-import { UpdateUserDto } from './dto/update-user.dto';
+import { UpdateUserDto } from './dto';
 
 @Controller('users')
 export class UsersController {

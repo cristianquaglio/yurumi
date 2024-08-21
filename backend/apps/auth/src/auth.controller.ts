@@ -1,10 +1,11 @@
-import { Response } from 'express';
+import { Request, Response } from 'express';
 import {
   Body,
   Controller,
   Get,
   Post,
   Query,
+  Req,
   Res,
   UseGuards,
 } from '@nestjs/common';
@@ -12,7 +13,7 @@ import { MessagePattern, Payload } from '@nestjs/microservices';
 
 import { CurrentUSer, UserDocument } from '@app/common';
 import { AuthService } from './auth.service';
-import { CreateUserDto } from './users/dto/create-user.dto';
+import { CreateUserDto, ChangePasswordDto } from './users/dto';
 import {
   ICreateUserPayload,
   IEmailActivationPayload,
@@ -45,6 +46,18 @@ export class AuthController {
   ) {
     const jwt = await this.authService.login(user, response);
     response.send(jwt);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Post('change-password')
+  changePassword(
+    @Body() changePasswordDto: ChangePasswordDto,
+    @Req() request: Request,
+  ) {
+    return this.authService.changePassword(
+      request.user['_id'],
+      changePasswordDto,
+    );
   }
 
   @UseGuards(JwtAuthGuard)

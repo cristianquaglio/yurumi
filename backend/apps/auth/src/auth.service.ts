@@ -1,16 +1,16 @@
+import { Response } from 'express';
 import { BadRequestException, Inject, Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
 import { ClientProxy } from '@nestjs/microservices';
 
 import { NOTIFICATIONS_SERVICE, UserDocument, UserRoles } from '@app/common';
-import { CreateUserDto } from './users/dto/create-user.dto';
+import { CreateUserDto, ChangePasswordDto } from './users/dto';
 import { UsersService } from './users/users.service';
 import {
   ICreateUserPayload,
   IEmailActivationPayload,
 } from './users/interfaces';
-import { Response } from 'express';
 
 @Injectable()
 export class AuthService {
@@ -82,6 +82,10 @@ export class AuthService {
       httpOnly: true,
       expires,
     });
+  }
+
+  async changePassword(_id: string, changePasswordDto: ChangePasswordDto) {
+    return await this.usersService.changePassword(_id, changePasswordDto);
   }
 
   private async extractEmailFromToken(token: string) {
