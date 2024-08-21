@@ -81,6 +81,13 @@ export class UsersService {
     }
   }
 
+  async clearRefreshToken(_id: string) {
+    return await this.usersRepository.findOneAndUpdate(
+      { _id },
+      { $set: { refreshToken: null } },
+    );
+  }
+
   async findAll(dependence: string) {
     return await this.usersRepository.find({ dependence });
   }

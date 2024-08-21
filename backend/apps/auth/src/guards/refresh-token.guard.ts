@@ -29,6 +29,8 @@ export class RefreshTokenGuard implements CanActivate {
       });
       const { userId } = decoded;
       request.user = await this.usersService.getUser({ _id: userId });
+      if (request.user.refreshToken !== refreshToken)
+        throw new UnauthorizedException('Invalid refresh token');
       return true;
     } catch (error) {
       throw new UnauthorizedException('Invalid refresh token');

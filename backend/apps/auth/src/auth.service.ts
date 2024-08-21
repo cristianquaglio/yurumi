@@ -87,6 +87,10 @@ export class AuthService {
     return { statusCode: 204, message: 'Refresh token done' };
   }
 
+  async logout(_id: string) {
+    return await this.usersService.clearRefreshToken(_id);
+  }
+
   private async generateTokens(user: UserDocument, response: Response) {
     const tokenPayload = {
       userId: user._id.toHexString(),

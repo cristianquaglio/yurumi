@@ -71,6 +71,12 @@ export class AuthController {
   }
 
   @UseGuards(JwtAuthGuard)
+  @Get('logout')
+  logout(@Req() req: Request) {
+    return this.authService.logout(req.user['_id']);
+  }
+
+  @UseGuards(JwtAuthGuard)
   @MessagePattern('authenticate')
   async authenticate(@Payload() data: any) {
     return data.user;
