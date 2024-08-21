@@ -73,7 +73,9 @@ export class AuthService {
 
   async login(user: UserDocument, response: Response) {
     const refreshToken = await this.generateTokens(user, response);
-    await this.usersService.refreshToken(user._id.toString(), refreshToken);
+    await this.usersService.updateCurrentUser(user._id.toString(), {
+      refreshToken,
+    });
   }
 
   async changePassword(_id: string, changePasswordDto: ChangePasswordDto) {
@@ -83,12 +85,16 @@ export class AuthService {
   async refreshTokens(_id: string, response: Response) {
     const user = await this.usersService.getUser({ _id });
     const refreshToken = await this.generateTokens(user, response);
-    await this.usersService.refreshToken(user._id.toString(), refreshToken);
+    await this.usersService.updateCurrentUser(user._id.toString(), {
+      refreshToken,
+    });
     return { statusCode: 204, message: 'Refresh token done' };
   }
 
   async logout(_id: string) {
-    return await this.usersService.clearRefreshToken(_id);
+    return await this.usersService.updateCurrentUser(_id, {
+      refreshToken: null,
+    });
   }
 
   private async generateTokens(user: UserDocument, response: Response) {

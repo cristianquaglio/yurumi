@@ -45,10 +45,6 @@ export class UsersService {
     return user;
   }
 
-  async refreshToken(_id: string, refreshToken: string) {
-    await this.usersRepository.findOneAndUpdate({ _id }, { refreshToken });
-  }
-
   async activateEmail(email: string) {
     const user = await this.usersRepository.findOne({ email });
     if (user.status !== UserStatus.EMAIL_ACTIVATION_PENDING)
@@ -81,13 +77,6 @@ export class UsersService {
     }
   }
 
-  async clearRefreshToken(_id: string) {
-    return await this.usersRepository.findOneAndUpdate(
-      { _id },
-      { $set: { refreshToken: null } },
-    );
-  }
-
   async findAll(dependence: string) {
     return await this.usersRepository.find({ dependence });
   }
@@ -105,13 +94,17 @@ export class UsersService {
     return true;
   }
 
-  async update(
-    _id: string,
-    updateUserDto: UpdateUserDto,
-    dependence = undefined,
-  ) {
+  async update(_id: string, updateUserDto: UpdateUserDto, dependence: string) {
     return await this.usersRepository.findOneAndUpdate(
       { _id, dependence },
+      { $set: updateUserDto },
+    );
+  }
+
+  async updateCurrentUser(_id: string, updateUserDto: UpdateUserDto) {
+    console.log(updateUserDto);
+    return await this.usersRepository.findOneAndUpdate(
+      { _id },
       { $set: updateUserDto },
     );
   }
