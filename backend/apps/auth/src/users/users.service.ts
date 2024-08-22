@@ -35,6 +35,10 @@ export class UsersService {
     return this.usersRepository.findOne(getUserDto);
   }
 
+  async getUserByEmail(email: string) {
+    return await this.usersRepository.findOne({ email });
+  }
+
   async verifyUser(email: string, password: string) {
     const user = await this.usersRepository.findOne({ email });
     const passwordIsValid = await bcrypt.compare(password, user.password);
@@ -102,7 +106,6 @@ export class UsersService {
   }
 
   async updateCurrentUser(_id: string, updateUserDto: UpdateUserDto) {
-    console.log(updateUserDto);
     return await this.usersRepository.findOneAndUpdate(
       { _id },
       { $set: updateUserDto },

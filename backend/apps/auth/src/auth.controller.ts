@@ -20,6 +20,7 @@ import {
   IEmailActivationPayload,
 } from './users';
 import { JwtAuthGuard, LocalAuthGuard, RefreshTokenGuard } from './guards';
+import { RecoverAccountDto } from './dto';
 
 @Controller('auth')
 export class AuthController {
@@ -67,6 +68,11 @@ export class AuthController {
     @Res({ passthrough: true }) response: Response,
   ) {
     return this.authService.refreshTokens(request.user['_id'], response);
+  }
+
+  @Post('recover-account')
+  recoverAccount(@Body() recoverAccountDto: RecoverAccountDto) {
+    return this.authService.recoverAccount(recoverAccountDto);
   }
 
   @UseGuards(JwtAuthGuard)

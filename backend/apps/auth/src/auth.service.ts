@@ -1,10 +1,21 @@
 import { Response } from 'express';
-import { BadRequestException, Inject, Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  Inject,
+  Injectable,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
 import { ClientProxy } from '@nestjs/microservices';
 
-import { NOTIFICATIONS_SERVICE, UserDocument, UserRoles } from '@app/common';
+import {
+  generatePassword,
+  NOTIFICATIONS_SERVICE,
+  UserDocument,
+  UserRoles,
+  UserStatus,
+} from '@app/common';
 import {
   ChangePasswordDto,
   CreateUserDto,
@@ -12,6 +23,8 @@ import {
   IEmailActivationPayload,
   UsersService,
 } from './users';
+import { RecoverAccountDto } from './dto';
+import * as bcrypt from 'bcryptjs';
 
 @Injectable()
 export class AuthService {
@@ -69,7 +82,17 @@ export class AuthService {
     const { token } = emailActivationPayload;
     const email = await this.extractEmailFromToken(token);
     const user = await this.usersService.activateEmail(email);
-    if (user) return { statusCode: 200, message: 'User email confirmated' };
+    if (user) {
+      this.notificationsService.emit('notify_email', {
+        email,
+        subject: 'Your email was validated successfully',
+        text: `
+        Dear ${user.firstName},\n
+        Your email was validated, now you can login.\n
+        `,
+      });
+      return { statusCode: 200, message: 'User email confirmated' };
+    }
   }
 
   async login(user: UserDocument, response: Response) {
@@ -90,6 +113,38 @@ export class AuthService {
       refreshToken,
     });
     return { statusCode: 204, message: 'Refresh token done' };
+  }
+
+  async recoverAccount(recoverAccountDto: RecoverAccountDto) {
+    const { email } = recoverAccountDto;
+
+    const user = await this.usersService.getUserByEmail(email);
+    if (user.status !== UserStatus.ACTIVE)
+      throw new UnauthorizedException(`User is not active`);
+    const generatedPassword = generatePassword();
+    const temporaryPassword = bcrypt.hashSync(generatedPassword, this.SALT);
+    await this.usersService.updateCurrentUser(user._id.toString(), {
+      password: temporaryPassword,
+      isPasswordChanged: false,
+    });
+    this.notificationsService.emit('notify_email', {
+      email,
+      subject: 'Recover your account',
+      text: `
+        Dear ${user.firstName},\n
+        Your new password has been generated automatically:\n
+          * email: ${user.email}
+        
+          * password: ${generatedPassword}\n
+        
+        Do not share this values.\n
+        We suggest to change this value for another one more friendly for you.\n
+        `,
+    });
+    return {
+      statusCode: 200,
+      message: `A email was sended to you with the new credentials`,
+    };
   }
 
   async logout(_id: string) {
