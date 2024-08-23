@@ -1,5 +1,7 @@
+import { Button } from '@mui/material';
+
 function App() {
-    return <h1>Hola Yurumi v1.0</h1>;
+    return <Button variant='contained'>Hola Yurumi!!!</Button>;
 }
 
 export default App;
