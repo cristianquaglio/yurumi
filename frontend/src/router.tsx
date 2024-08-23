@@ -1,13 +1,13 @@
 import { createBrowserRouter } from 'react-router-dom';
 
 import HomePage from './pages/HomePage';
-import ChangePassword from './pages/auth/ChangePassword';
-import EmailActivation from './pages/auth/EmailActivation';
 import LoginPage from './pages/auth/LoginPage';
-import RecoverAccount from './pages/auth/RecoverAccount';
 import SignUpPage from './pages/auth/SignUpPage';
 import PrivateRoutes from './pages/PrivateRoutes';
 import PublicRoutes from './pages/PublicRoutes';
+import EmailActivationPage from './pages/auth/EmailActivationPage';
+import RecoverAccountPage from './pages/auth/RecoverAccountPage';
+import ChangePasswordPage from './pages/auth/ChangePasswordPage';
 
 const isAuthenticated = false;
 
@@ -21,7 +21,7 @@ const router = createBrowserRouter([
             },
             {
                 path: '/email-activation',
-                element: <EmailActivation />,
+                element: <EmailActivationPage />,
             },
             {
                 path: '/login',
@@ -29,7 +29,7 @@ const router = createBrowserRouter([
             },
             {
                 path: '/recover-account',
-                element: <RecoverAccount />,
+                element: <RecoverAccountPage />,
             },
         ],
     },
@@ -38,7 +38,7 @@ const router = createBrowserRouter([
         children: [
             {
                 path: '/change-password',
-                element: <ChangePassword />,
+                element: <ChangePasswordPage />,
             },
             {
                 path: '/',
