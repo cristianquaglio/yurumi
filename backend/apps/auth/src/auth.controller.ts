@@ -190,6 +190,42 @@ export class AuthController {
   }
 
   @Post('recover-account')
+  @ApiOperation({ summary: "Recover user's account" })
+  @ApiResponse({
+    status: 200,
+    description: 'A email was sended to you with the new credentials',
+    example: {
+      statusCode: 200,
+      message: 'A email was sended to you with the new credentials',
+    },
+  })
+  @ApiResponse({
+    status: 400,
+    description: 'Bad Request',
+    example: {
+      statusCode: 400,
+      message: ['email must be an email'],
+      error: 'Bad Request',
+    },
+  })
+  @ApiResponse({
+    status: 401,
+    description: 'User is not active',
+    example: {
+      statusCode: 401,
+      message: 'User is not active',
+      error: 'Unauthorized',
+    },
+  })
+  @ApiResponse({
+    status: 404,
+    description: 'Document was not found',
+    example: {
+      statusCode: 404,
+      message: 'Document was not found',
+      error: 'Not Found',
+    },
+  })
   recoverAccount(@Body() recoverAccountDto: RecoverAccountDto) {
     return this.authService.recoverAccount(recoverAccountDto);
   }
