@@ -10,6 +10,7 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { MessagePattern, Payload } from '@nestjs/microservices';
+import { ApiOperation, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
 
 import { CurrentUSer, UserDocument } from '@app/common';
 import { AuthService } from './auth.service';
@@ -20,13 +21,48 @@ import {
   IEmailActivationPayload,
 } from './users';
 import { JwtAuthGuard, LocalAuthGuard, RefreshTokenGuard } from './guards';
-import { RecoverAccountDto } from './dto';
+import { LoginDto, RecoverAccountDto } from './dto';
 
 @Controller('auth')
+@ApiTags('Auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
   @Post('signup')
+  @ApiOperation({ summary: 'Create a new user' })
+  @ApiResponse({
+    status: 201,
+    description: 'User created',
+    example: { statusCode: 201, message: 'User created' },
+  })
+  @ApiResponse({
+    status: 401,
+    description: 'Duplicated data in database',
+    example: {
+      statusCode: 401,
+      message: 'Duplicated data in database',
+    },
+  })
+  @ApiResponse({
+    status: 400,
+    description: 'Bad Request',
+    example: {
+      statusCode: 400,
+      message: [
+        'firstName should not be empty',
+        'firstName must be a string',
+        'lastName should not be empty',
+        'lastName must be a string',
+        'email must be an email',
+        'password is not strong enough',
+        'roles must contain at least 1 elements',
+        'each value in roles must be one of the following values: ADMINISTRATIVE, PROFESSIONAL, PATIENT, TECHNICIAN, DIRECTIVE',
+        'roles must be an array',
+      ],
+      error: 'Bad Request',
+    },
+  })
+  @ApiQuery({ name: 'dependence', type: String, required: true })
   signup(
     @Query() createUserPayload: ICreateUserPayload,
     @Body() createUserDto: CreateUserDto,
@@ -35,13 +71,53 @@ export class AuthController {
   }
 
   @Get('email-activation')
+  @ApiOperation({ summary: 'Activate an account email' })
+  @ApiResponse({
+    status: 200,
+    description: 'User email confirmated',
+    example: { statusCode: 200, message: 'User email confirmated' },
+  })
+  @ApiResponse({
+    status: 400,
+    description: 'Email confirmation token broken or expired',
+    example: {
+      statusCode: 400,
+      message: 'Email confirmation token broken or expired',
+      error: 'Bad Request',
+    },
+  })
+  @ApiQuery({ name: 'token', type: String, required: true })
   emailActivation(@Query() emailActivationPayload: IEmailActivationPayload) {
     return this.authService.emailActivation(emailActivationPayload);
   }
 
   @UseGuards(LocalAuthGuard)
   @Post('login')
+  @ApiOperation({ summary: 'Initiate a session' })
+  @ApiResponse({
+    status: 201,
+    description: 'User logged in',
+  })
+  @ApiResponse({
+    status: 401,
+    description: 'Unauthorized',
+    example: {
+      statusCode: 401,
+      message: 'Credentials are not valid || User is not active',
+      error: 'Unauthorized',
+    },
+  })
+  @ApiResponse({
+    status: 404,
+    description: 'Document was not found',
+    example: {
+      statusCode: 404,
+      message: 'Document was not found',
+      error: 'Not Found',
+    },
+  })
   async login(
+    @Body() loginDto: LoginDto,
     @CurrentUSer() user: UserDocument,
     @Res({ passthrough: true }) response: Response,
   ) {
@@ -51,6 +127,34 @@ export class AuthController {
 
   @UseGuards(JwtAuthGuard)
   @Post('change-password')
+  @ApiOperation({ summary: "Change user's password" })
+  @ApiResponse({
+    status: 200,
+    description: 'Password changed successfully',
+    example: {
+      statusCode: 200,
+      message: 'Password changed successfully',
+    },
+  })
+  @ApiResponse({
+    status: 401,
+    description: 'User is not active',
+    example: {
+      statusCode: 401,
+      message: 'User is not active',
+      error: 'Unauthorized',
+    },
+  })
+  @ApiResponse({
+    status: 400,
+    description: 'Bad Request',
+    example: {
+      statusCode: 400,
+      message:
+        "Password can't be the same one || ['password is not strong enough']",
+      error: 'Bad Request',
+    },
+  })
   changePassword(
     @Body() changePasswordDto: ChangePasswordDto,
     @Req() request: Request,
@@ -63,6 +167,21 @@ export class AuthController {
 
   @UseGuards(RefreshTokenGuard)
   @Get('refresh')
+  @ApiOperation({ summary: "Refresh user's token" })
+  @ApiResponse({
+    status: 204,
+    description: 'Refresh token done',
+    example: { statusCode: 204, message: 'Refresh token done' },
+  })
+  @ApiResponse({
+    status: 401,
+    description: 'Unauthorized',
+    example: {
+      statusCode: 401,
+      message: 'No refresh token provided || Invalid refresh token',
+      error: 'Unauthorized',
+    },
+  })
   refreshTokens(
     @Req() request: Request,
     @Res({ passthrough: true }) response: Response,

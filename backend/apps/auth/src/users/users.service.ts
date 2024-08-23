@@ -43,7 +43,7 @@ export class UsersService {
     const user = await this.usersRepository.findOne({ email });
     const passwordIsValid = await bcrypt.compare(password, user.password);
     if (!passwordIsValid)
-      throw new UnauthorizedException('Credentials are not valid.');
+      throw new UnauthorizedException('Credentials are not valid');
     if (user.status !== UserStatus.ACTIVE)
       throw new UnauthorizedException(`User is not active`);
     return user;
@@ -62,12 +62,11 @@ export class UsersService {
   async changePassword(_id: string, changePasswordDto: ChangePasswordDto) {
     const { password } = changePasswordDto;
     const user = await this.usersRepository.findOne({ _id });
-    if (user.status !== UserStatus.ACTIVE)
-      throw new BadRequestException(`User is not active`);
+    if (user.status !== UserStatus.ACTIVE) throw new UnauthorizedException();
     if (await bcrypt.compare(password, user.password))
       throw new BadRequestException(`Password can't be the same one`);
     try {
-      return await this.usersRepository.findOneAndUpdate(
+      await this.usersRepository.findOneAndUpdate(
         { _id },
         {
           $set: {
@@ -76,6 +75,7 @@ export class UsersService {
           },
         },
       );
+      return { statusCode: 200, message: 'Password changed successfully' };
     } catch (error) {
       errorHandler(error);
     }

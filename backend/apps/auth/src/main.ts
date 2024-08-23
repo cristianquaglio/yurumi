@@ -2,6 +2,7 @@ import { NestFactory } from '@nestjs/core';
 import { ValidationPipe } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Transport } from '@nestjs/microservices';
+import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import * as cookieParser from 'cookie-parser';
 import { Logger } from 'nestjs-pino';
 
@@ -9,6 +10,18 @@ import { AuthModule } from './auth.module';
 
 async function main() {
   const app = await NestFactory.create(AuthModule);
+
+  const config = new DocumentBuilder()
+    .setTitle('Auth API')
+    .setDescription(
+      'This microservice performs many tasks related to authentication and authorization from users to the Yurumi system',
+    )
+    .setVersion('1.0')
+    .addCookieAuth('Authentication')
+    .build();
+  const document = SwaggerModule.createDocument(app, config);
+  SwaggerModule.setup('api/doc', app, document);
+
   const configService = app.get(ConfigService);
   app.connectMicroservice({
     transport: Transport.TCP,
@@ -19,7 +32,7 @@ async function main() {
   });
   app.use(cookieParser());
   app.useGlobalPipes(new ValidationPipe({ whitelist: true }));
-  
+
   app.useLogger(app.get(Logger));
   await app.startAllMicroservices();
   await app.listen(configService.get('HTTP_PORT'));
