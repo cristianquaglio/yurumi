@@ -9,7 +9,7 @@ import EmailActivationPage from './pages/auth/EmailActivationPage';
 import RecoverAccountPage from './pages/auth/RecoverAccountPage';
 import ChangePasswordPage from './pages/auth/ChangePasswordPage';
 
-const isAuthenticated = false;
+const isAuthenticated = true;
 
 const router = createBrowserRouter([
     {
