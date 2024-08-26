@@ -1,9 +1,13 @@
 import React from 'react';
 
-import AppBar from '../components/ui/AppBar';
+import { MainLayout } from '../components/layouts';
 
 const HomePage: React.FC = () => {
-    return <AppBar title='Yurumi v1.0' />;
+    return (
+        <MainLayout>
+            <></>
+        </MainLayout>
+    );
 };
 
 export default HomePage;
