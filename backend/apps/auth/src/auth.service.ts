@@ -8,6 +8,7 @@ import {
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
 import { ClientProxy } from '@nestjs/microservices';
+import * as bcrypt from 'bcryptjs';
 
 import {
   generatePassword,
@@ -24,7 +25,6 @@ import {
   UsersService,
 } from './users';
 import { RecoverAccountDto } from './dto';
-import * as bcrypt from 'bcryptjs';
 
 @Injectable()
 export class AuthService {
@@ -148,9 +148,10 @@ export class AuthService {
   }
 
   async logout(_id: string) {
-    return await this.usersService.updateCurrentUser(_id, {
+    const user = await this.usersService.updateCurrentUser(_id, {
       refreshToken: null,
     });
+    if (user) return { statusCode: 200, message: 'User logged out' };
   }
 
   private async generateTokens(user: UserDocument, response: Response) {
@@ -190,11 +191,17 @@ export class AuthService {
       });
       if (typeof payload === 'object' && 'email' in payload)
         return payload.email;
-      throw new BadRequestException(`Bad confirmation token`);
+      throw new BadRequestException(
+        `Email confirmation token broken or expired`,
+      );
     } catch (error) {
       if (error?.name === 'TokenExpiredError')
-        throw new BadRequestException(`Email confirmation token expired`);
-      throw new BadRequestException(`Bad confirmation token`);
+        throw new BadRequestException(
+          `Email confirmation token broken or expired`,
+        );
+      throw new BadRequestException(
+        `Email confirmation token broken or expired`,
+      );
     }
   }
 
