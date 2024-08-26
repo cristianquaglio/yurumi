@@ -148,9 +148,10 @@ export class AuthService {
   }
 
   async logout(_id: string) {
-    return await this.usersService.updateCurrentUser(_id, {
+    const user = await this.usersService.updateCurrentUser(_id, {
       refreshToken: null,
     });
+    if (user) return { statusCode: 200, message: 'User logged out' };
   }
 
   private async generateTokens(user: UserDocument, response: Response) {

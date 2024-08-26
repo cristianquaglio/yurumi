@@ -232,6 +232,15 @@ export class AuthController {
 
   @UseGuards(JwtAuthGuard)
   @Get('logout')
+  @ApiOperation({ summary: "logout user's session" })
+  @ApiResponse({
+    status: 200,
+    description: 'User logged out',
+    example: {
+      statusCode: 200,
+      message: 'User logged out',
+    },
+  })
   logout(@Req() req: Request) {
     return this.authService.logout(req.user['_id']);
   }
