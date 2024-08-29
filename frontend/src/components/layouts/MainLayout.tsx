@@ -141,7 +141,15 @@ export const MainLayout: FC<Props> = ({ children }) => {
                 }}
             >
                 <Toolbar />
-                <Container maxWidth='lg' sx={{ mt: 4, mb: 4 }}>
+                <Container
+                    maxWidth='sm'
+                    sx={{
+                        height: '100vh',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                    }}
+                >
                     {children}
                 </Container>
             </Box>

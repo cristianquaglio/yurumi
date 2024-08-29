@@ -9,7 +9,7 @@ import { Logger } from 'nestjs-pino';
 import { AuthModule } from './auth.module';
 
 async function main() {
-  const app = await NestFactory.create(AuthModule);
+  const app = await NestFactory.create(AuthModule, { cors: true });
 
   const config = new DocumentBuilder()
     .setTitle('Auth API')

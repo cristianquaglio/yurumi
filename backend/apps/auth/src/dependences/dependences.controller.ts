@@ -17,6 +17,8 @@ import { CreateDependenceDto, UpdateDependenceDto } from './dto';
 export class DependencesController {
   constructor(private readonly dependencesService: DependencesService) {}
 
+  // @UseGuards(JwtAuthGuard)
+  // @Roles(UserRoles.SA)
   @Post()
   create(@Body() createDependenceDto: CreateDependenceDto) {
     return this.dependencesService.create(createDependenceDto);
