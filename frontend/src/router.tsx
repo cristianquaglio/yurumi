@@ -10,6 +10,7 @@ import RecoverAccountPage from './pages/auth/RecoverAccountPage';
 import ChangePasswordPage from './pages/auth/ChangePasswordPage';
 import CreateDependencePage from './pages/dependences/CreateDependencePage';
 import ListDependencesPage from './pages/dependences/ListDependencesPage';
+import DependencePage from './pages/dependences/DependencePage';
 
 const isAuthenticated = true;
 
@@ -52,7 +53,7 @@ const router = createBrowserRouter([
             },
             {
                 path: 'dependences/:dependenceId',
-                element: <CreateDependencePage />,
+                element: <DependencePage />,
             },
             {
                 path: 'dependences/update/:dependenceId',

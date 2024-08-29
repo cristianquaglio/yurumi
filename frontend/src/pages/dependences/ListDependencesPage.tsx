@@ -134,7 +134,7 @@ const ListDependencesPage = () => {
             width: 60,
             renderCell: ({ row }: Partial<GridRowParams>) => (
                 <Button
-                    href={`/dependences/find/${row._id}`}
+                    href={`/dependences/${row._id}`}
                     startIcon={<VisibilityOutlinedIcon />}
                 />
             ),
@@ -172,12 +172,12 @@ const ListDependencesPage = () => {
                     variant='h6'
                     noWrap
                     component='div'
-                    sx={{ flexGrow: 1, display: { xs: 'none', sm: 'block' } }}
+                    sx={{ flexGrow: 1, display: { sm: 'block' } }}
                 >
                     Dependencias
                 </Typography>
-                <Grid display={'flex'}>
-                    <Search sx={{ flexGrow: 1 }}>
+                <Grid display={'flex'} sx={{ mb: '.5rem' }}>
+                    <Search sx={{ flexGrow: 1, marginRight: '.5rem' }}>
                         <SearchIconWrapper>
                             <SearchIcon />
                         </SearchIconWrapper>
