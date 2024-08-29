@@ -37,7 +37,7 @@ export const findAllDependences = createAsyncThunk(
 );
 
 export const findDependence = createAsyncThunk(
-    'company/findDependence',
+    'dependence/findDependence',
     async (dependenceId: string) => {
         try {
             return await DependenceService.findDependence(dependenceId);
@@ -48,7 +48,7 @@ export const findDependence = createAsyncThunk(
 );
 
 export const createDependence = createAsyncThunk(
-    'company/createDependence',
+    'dependence/createDependence',
     async (dependence: IDependence, thunkAPI) => {
         try {
             return await DependenceService.createDependence(dependence);

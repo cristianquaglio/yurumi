@@ -142,12 +142,13 @@ export const MainLayout: FC<Props> = ({ children }) => {
             >
                 <Toolbar />
                 <Container
-                    maxWidth='sm'
+                    // maxWidth='sm'
                     sx={{
-                        height: '100vh',
                         display: 'flex',
-                        alignItems: 'center',
+                        flexDirection: 'column',
                         justifyContent: 'center',
+                        alignItems: 'center',
+                        minHeight: '100vh',
                     }}
                 >
                     {children}

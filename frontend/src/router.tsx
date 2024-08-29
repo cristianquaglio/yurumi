@@ -8,8 +8,7 @@ import PublicRoutes from './pages/PublicRoutes';
 import EmailActivationPage from './pages/auth/EmailActivationPage';
 import RecoverAccountPage from './pages/auth/RecoverAccountPage';
 import ChangePasswordPage from './pages/auth/ChangePasswordPage';
-import { CreateDependencePage } from './pages/dependences/CreateDependencePage';
-import { MainLayout } from './components/layouts';
+import CreateDependencePage from './pages/dependences/CreateDependencePage';
 import ListDependencesPage from './pages/dependences/ListDependencesPage';
 
 const isAuthenticated = true;
@@ -46,24 +45,22 @@ const router = createBrowserRouter([
             {
                 path: 'dependences',
                 element: <ListDependencesPage />,
-                children: [
-                    {
-                        path: 'create',
-                        element: <CreateDependencePage />,
-                    },
-                    {
-                        path: ':dependenceId',
-                        element: <CreateDependencePage />,
-                    },
-                    {
-                        path: 'update/:dependenceId',
-                        element: <CreateDependencePage />,
-                    },
-                    {
-                        path: 'delete/:dependenceId',
-                        element: <CreateDependencePage />,
-                    },
-                ],
+            },
+            {
+                path: 'dependences/create',
+                element: <CreateDependencePage />,
+            },
+            {
+                path: 'dependences/:dependenceId',
+                element: <CreateDependencePage />,
+            },
+            {
+                path: 'dependences/update/:dependenceId',
+                element: <CreateDependencePage />,
+            },
+            {
+                path: 'dependences/delete/:dependenceId',
+                element: <CreateDependencePage />,
             },
             {
                 path: '/',

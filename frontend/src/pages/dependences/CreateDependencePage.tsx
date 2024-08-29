@@ -14,7 +14,6 @@ import {
 import { ErrorOutline } from '@mui/icons-material';
 
 import { MainLayout } from '../../components/layouts';
-// import { companyDocumentTypesList, companyTypesList } from '../../utils';
 import { useDispatch, useSelector } from 'react-redux';
 import { AppDispatch, RootState } from '../../store/store';
 import { createDependence } from '../../redux/slices/dependenceSlice';
@@ -31,7 +30,7 @@ type formData = {
     tributaryId: string;
 };
 
-export const CreateDependencePage = () => {
+const CreateDependencePage = () => {
     const navigate = useNavigate();
 
     const dispatch = useDispatch<AppDispatch>();
@@ -197,3 +196,5 @@ export const CreateDependencePage = () => {
         </MainLayout>
     );
 };
+
+export default CreateDependencePage;
