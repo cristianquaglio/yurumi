@@ -1,0 +1,8 @@
+- en back
+    terminar doc
+    armar testings unitarios + integracion
+- en front
+    dependencias:
+        - checkear errores
+        - quitar hardcoding
+        - adecuar accesibilidad (links a otros accesos en pages)
