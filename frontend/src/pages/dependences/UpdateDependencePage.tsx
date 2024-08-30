@@ -20,6 +20,11 @@ import {
     findDependence,
     updateDependence,
 } from '../../redux/slices/dependenceSlice';
+import {
+    listDependenceStatus,
+    listDependenceTypes,
+    listTributaryTypes,
+} from '../../utils/handlers/dependences';
 
 type formData = {
     type: string;
@@ -97,12 +102,7 @@ export const UpdateDependencePage = () => {
                                     error={!!errors.type}
                                     helperText={errors.type?.message}
                                 >
-                                    {[
-                                        { id: '', value: '--SELECCIONE--' },
-                                        { id: 'PUBLIC', value: 'Publico' },
-                                        { id: 'PRIVATE', value: 'Privado' },
-                                        { id: 'MIXT', value: 'Mixto' },
-                                    ].map(
+                                    {listDependenceTypes().map(
                                         ({
                                             id,
                                             value,
@@ -165,10 +165,7 @@ export const UpdateDependencePage = () => {
                                     error={!!errors.tributaryType}
                                     helperText={errors.tributaryType?.message}
                                 >
-                                    {[
-                                        { id: '', value: '--SELECCIONE--' },
-                                        { id: 'CUIT', value: 'CUIT' },
-                                    ].map(
+                                    {listTributaryTypes().map(
                                         ({
                                             id,
                                             value,
@@ -210,11 +207,7 @@ export const UpdateDependencePage = () => {
                                     error={!!errors.status}
                                     helperText={errors.status?.message}
                                 >
-                                    {[
-                                        { id: '', value: '--SELECCIONE--' },
-                                        { id: 'ACTIVE', value: 'ACTIVO' },
-                                        { id: 'INACTIVE', value: 'INACTIVO' },
-                                    ].map(
+                                    {listDependenceStatus().map(
                                         ({
                                             id,
                                             value,

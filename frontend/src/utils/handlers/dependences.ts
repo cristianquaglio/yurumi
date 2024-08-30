@@ -17,3 +17,22 @@ export const dependenceStatus = (status: string) => {
             return 'INACTIVO';
     }
 };
+
+export const listDependenceTypes = () => {
+    return [
+        { id: 'PUBLIC', value: 'Publico' },
+        { id: 'PRIVATE', value: 'Privado' },
+        { id: 'MIXT', value: 'Mixto' },
+    ];
+};
+
+export const listTributaryTypes = () => {
+    return [{ id: 'CUIT', value: 'CUIT' }];
+};
+
+export const listDependenceStatus = () => {
+    return [
+        { id: 'ACTIVE', value: 'ACTIVO' },
+        { id: 'INACTIVE', value: 'INACTIVO' },
+    ];
+};

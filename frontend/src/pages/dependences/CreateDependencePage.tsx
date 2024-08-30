@@ -17,6 +17,10 @@ import { MainLayout } from '../../components/layouts';
 import { useDispatch, useSelector } from 'react-redux';
 import { AppDispatch, RootState } from '../../store/store';
 import { createDependence } from '../../redux/slices/dependenceSlice';
+import {
+    listDependenceTypes,
+    listTributaryTypes,
+} from '../../utils/handlers/dependences';
 
 type formData = {
     type: string;
@@ -79,11 +83,7 @@ export const CreateDependencePage = () => {
                                 error={!!errors.type}
                                 helperText={errors.type?.message}
                             >
-                                {[
-                                    { id: 'PUBLIC', value: 'Publico' },
-                                    { id: 'PRIVATE', value: 'Privado' },
-                                    { id: 'MIXT', value: 'Mixto' },
-                                ].map(
+                                {listDependenceTypes().map(
                                     ({
                                         id,
                                         value,
@@ -144,7 +144,7 @@ export const CreateDependencePage = () => {
                                 error={!!errors.tributaryType}
                                 helperText={errors.tributaryType?.message}
                             >
-                                {[{ id: 'CUIT', value: 'CUIT' }].map(
+                                {listTributaryTypes().map(
                                     ({
                                         id,
                                         value,
