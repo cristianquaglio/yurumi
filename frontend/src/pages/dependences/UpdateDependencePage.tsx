@@ -15,7 +15,6 @@ import {
 import { ErrorOutline } from '@mui/icons-material';
 
 import { MainLayout } from '../../components/layouts';
-
 import { AppDispatch, RootState } from '../../store/store';
 import {
     findDependence,
@@ -31,7 +30,7 @@ type formData = {
     status: string;
 };
 
-const UpdateDependencePage = () => {
+export const UpdateDependencePage = () => {
     const navigate = useNavigate();
 
     const params = useParams();
@@ -251,5 +250,3 @@ const UpdateDependencePage = () => {
         </MainLayout>
     );
 };
-
-export default UpdateDependencePage;

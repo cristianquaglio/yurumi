@@ -20,17 +20,13 @@ import { createDependence } from '../../redux/slices/dependenceSlice';
 
 type formData = {
     type: string;
-
     shortName: string;
-
     fullName: string;
-
     tributaryType: string;
-
     tributaryId: string;
 };
 
-const CreateDependencePage = () => {
+export const CreateDependencePage = () => {
     const navigate = useNavigate();
 
     const dispatch = useDispatch<AppDispatch>();
@@ -77,7 +73,6 @@ const CreateDependencePage = () => {
                                 variant='filled'
                                 defaultValue=''
                                 fullWidth
-                                // SelectProps={{ ...SelectProps, multiple: true }}
                                 {...register('type', {
                                     required: 'Este campo es requerido',
                                 })}
@@ -196,5 +191,3 @@ const CreateDependencePage = () => {
         </MainLayout>
     );
 };
-
-export default CreateDependencePage;

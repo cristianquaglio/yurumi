@@ -5,12 +5,12 @@ interface PublicRoutesProps {
     isAuthenticated: boolean;
 }
 
-const PublicRoutes: React.FC<PublicRoutesProps> = ({ isAuthenticated }) => {
+export const PublicRoutes: React.FC<PublicRoutesProps> = ({
+    isAuthenticated,
+}) => {
     if (isAuthenticated) {
         return <Navigate to='/' replace />;
     }
 
     return <Outlet />;
 };
-
-export default PublicRoutes;

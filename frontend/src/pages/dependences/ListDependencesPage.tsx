@@ -71,7 +71,7 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
     },
 }));
 
-const ListDependencesPage = () => {
+export const ListDependencesPage = () => {
     const dispatch = useDispatch<AppDispatch>();
     const { isLoading, dependences, isDeleted } = useSelector(
         (state: RootState) => state.dependence,
@@ -226,5 +226,3 @@ const ListDependencesPage = () => {
         </MainLayout>
     );
 };
-
-export default ListDependencesPage;

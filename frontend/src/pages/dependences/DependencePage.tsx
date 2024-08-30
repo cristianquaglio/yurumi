@@ -24,7 +24,7 @@ import {
 } from '../../utils/handlers/dependences';
 import { DeleteDialog } from '../../components/ui/DeleteDialog';
 
-const DependencePage = () => {
+export const DependencePage = () => {
     const params = useParams();
     const dependenceId = params.dependenceId ? params.dependenceId : '';
 
@@ -206,5 +206,3 @@ const DependencePage = () => {
         </MainLayout>
     );
 };
-
-export default DependencePage;

@@ -1,17 +1,19 @@
 import { createBrowserRouter } from 'react-router-dom';
 
-import HomePage from './pages/HomePage';
-import LoginPage from './pages/auth/LoginPage';
-import SignUpPage from './pages/auth/SignUpPage';
-import PrivateRoutes from './pages/PrivateRoutes';
-import PublicRoutes from './pages/PublicRoutes';
-import EmailActivationPage from './pages/auth/EmailActivationPage';
-import RecoverAccountPage from './pages/auth/RecoverAccountPage';
-import ChangePasswordPage from './pages/auth/ChangePasswordPage';
-import CreateDependencePage from './pages/dependences/CreateDependencePage';
-import ListDependencesPage from './pages/dependences/ListDependencesPage';
-import DependencePage from './pages/dependences/DependencePage';
-import UpdateDependencePage from './pages/dependences/UpdateDependencePage';
+import {
+    ChangePasswordPage,
+    CreateDependencePage,
+    DependencePage,
+    EmailActivationPage,
+    HomePage,
+    ListDependencesPage,
+    LoginPage,
+    PrivateRoutes,
+    PublicRoutes,
+    RecoverAccountPage,
+    SignUpPage,
+    UpdateDependencePage,
+} from './pages';
 
 const isAuthenticated = true;
 
