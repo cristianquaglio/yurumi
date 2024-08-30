@@ -11,6 +11,7 @@ import ChangePasswordPage from './pages/auth/ChangePasswordPage';
 import CreateDependencePage from './pages/dependences/CreateDependencePage';
 import ListDependencesPage from './pages/dependences/ListDependencesPage';
 import DependencePage from './pages/dependences/DependencePage';
+import UpdateDependencePage from './pages/dependences/UpdateDependencePage';
 
 const isAuthenticated = true;
 
@@ -57,11 +58,7 @@ const router = createBrowserRouter([
             },
             {
                 path: 'dependences/update/:dependenceId',
-                element: <CreateDependencePage />,
-            },
-            {
-                path: 'dependences/delete/:dependenceId',
-                element: <CreateDependencePage />,
+                element: <UpdateDependencePage />,
             },
             {
                 path: '/',
