@@ -11,25 +11,25 @@ export const SecondaryList = () => {
     return (
         <Fragment>
             <ListSubheader component='div' inset>
-                Operaciones
+                Operaciones recientes
             </ListSubheader>
             <ListItemButton>
                 <ListItemIcon>
                     <AssignmentIcon />
                 </ListItemIcon>
-                <ListItemText primary='Lista de usuarios' />
+                <ListItemText primary='Dependencias' />
             </ListItemButton>
             <ListItemButton>
                 <ListItemIcon>
                     <AssignmentIcon />
                 </ListItemIcon>
-                <ListItemText primary='Lista de organismos' />
+                <ListItemText primary='Usuarios' />
             </ListItemButton>
             <ListItemButton>
                 <ListItemIcon>
                     <AssignmentIcon />
                 </ListItemIcon>
-                <ListItemText primary='Actividades recientes' />
+                <ListItemText primary='...' />
             </ListItemButton>
         </Fragment>
     );

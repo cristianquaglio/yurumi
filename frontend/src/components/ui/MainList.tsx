@@ -10,28 +10,15 @@ export const MainList = () => {
             <>
                 <ListItemButton>
                     <Link
-                        to='/companies'
+                        to='/dependences'
                         style={{ textDecoration: 'none', color: 'inherit' }}
                     >
                         <ListItemIcon>
                             <AccountBalanceOutlinedIcon />
                         </ListItemIcon>
                     </Link>
-                    <ListItemText primary='Organismos' />
+                    <ListItemText primary='Dependencias' />
                 </ListItemButton>
-                <ListItemButton>
-                    <Link
-                        to='/admin-users'
-                        style={{ textDecoration: 'none', color: 'inherit' }}
-                    >
-                        <ListItemIcon>
-                            <PeopleIcon />
-                        </ListItemIcon>
-                    </Link>
-                    <ListItemText primary='Usuarios admin' />
-                </ListItemButton>
-            </>
-            <>
                 <ListItemButton>
                     <Link
                         to='/users'
