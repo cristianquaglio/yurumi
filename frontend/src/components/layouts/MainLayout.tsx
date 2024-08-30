@@ -16,7 +16,6 @@ import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import { AccountCircle } from '@mui/icons-material';
 
 import { AppBar, Drawer, MainList, SecondaryList } from '../ui';
-import { spanishResource } from '../../utils/resources';
 
 interface Props {
     children: React.ReactNode;
@@ -76,7 +75,7 @@ export const MainLayout: FC<Props> = ({ children }) => {
                             to='/'
                             style={{ textDecoration: 'none', color: 'inherit' }}
                         >
-                            {`${spanishResource.appTitle} ${spanishResource.appVersion}`}
+                            Yurumi v1.0
                         </Link>
                     </Typography>
                     <IconButton
