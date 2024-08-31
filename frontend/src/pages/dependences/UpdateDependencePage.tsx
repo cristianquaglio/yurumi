@@ -42,7 +42,7 @@ export const UpdateDependencePage = () => {
     const dependenceId = params.dependenceId ? params.dependenceId : '';
 
     const dispatch = useDispatch<AppDispatch>();
-    const { dependence, isLoading, hasError, isUpdated, isUpdating } =
+    const { dependence, isLoading, hasError, isUpdated, isUpdating, error } =
         useSelector((state: RootState) => state.dependence);
 
     const {
@@ -77,11 +77,19 @@ export const UpdateDependencePage = () => {
                     <Box sx={{ width: 350, padding: '10px 20px' }}>
                         <Grid container spacing={2}>
                             <Grid item xs={12}>
-                                <Typography variant='h4' component='h4'>
+                                <Typography
+                                    variant='h4'
+                                    component='h4'
+                                    textAlign='center'
+                                >
                                     Actualizar datos
                                 </Typography>
                                 <Chip
-                                    label='Error actualizando los datos'
+                                    label={`${
+                                        error === 'Bad Request error'
+                                            ? 'Registro existente'
+                                            : 'Error actualizando el registro'
+                                    }`}
                                     color='error'
                                     icon={<ErrorOutline />}
                                     className='fadeIn'
@@ -223,18 +231,20 @@ export const UpdateDependencePage = () => {
                                 </TextField>
                             </Grid>
                             <Grid item xs={12}>
-                                <Button
-                                    type='submit'
-                                    variant='outlined'
-                                    color='success'
-                                    disabled={isUpdating}
-                                >
-                                    {isUpdating ? (
-                                        <CircularProgress />
-                                    ) : (
-                                        'Actualizar datos'
-                                    )}
-                                </Button>
+                                <Box display='flex' justifyContent='center'>
+                                    <Button
+                                        type='submit'
+                                        variant='outlined'
+                                        color='success'
+                                        disabled={isUpdating}
+                                    >
+                                        {isUpdating ? (
+                                            <CircularProgress />
+                                        ) : (
+                                            'Actualizar datos'
+                                        )}
+                                    </Button>
+                                </Box>
                             </Grid>
                         </Grid>
                     </Box>

@@ -1,4 +1,4 @@
-import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
+import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
 
 import { IDependence } from '../../utils/interfaces';
 import DependenceService from '../services/dependenceServices';
@@ -8,6 +8,7 @@ interface dependenceState {
     isLoading: boolean;
     dependence: IDependence | undefined;
     hasError: boolean;
+    error: string;
     isCreated: boolean;
     isUpdated: boolean;
     isUpdating: boolean;
@@ -19,6 +20,7 @@ const initialState: dependenceState = {
     isLoading: false,
     dependence: undefined,
     hasError: false,
+    error: '',
     isCreated: false,
     isUpdated: false,
     isUpdating: false,
@@ -53,13 +55,7 @@ export const createDependence = createAsyncThunk(
         try {
             return await DependenceService.createDependence(dependence);
         } catch (error: any) {
-            const message =
-                (error.response &&
-                    error.response.data &&
-                    error.response.data.message) ||
-                error.message ||
-                error.toString();
-            return thunkAPI.rejectWithValue(message);
+            return thunkAPI.rejectWithValue(error.message);
         }
     },
 );
@@ -139,11 +135,15 @@ export const dependenceSlice = createSlice({
                 state.hasError = false;
                 state.isCreated = false;
             })
-            .addCase(createDependence.rejected, (state) => {
-                state.isLoading = false;
-                state.hasError = true;
-                state.isCreated = false;
-            })
+            .addCase(
+                createDependence.rejected,
+                (state, action: PayloadAction<any>) => {
+                    state.isLoading = false;
+                    state.hasError = true;
+                    state.isCreated = false;
+                    state.error = action.payload as string;
+                },
+            )
             .addCase(updateDependence.fulfilled, (state) => {
                 state.hasError = false;
                 state.isUpdated = true;
@@ -154,11 +154,15 @@ export const dependenceSlice = createSlice({
                 state.isUpdated = false;
                 state.isUpdating = true;
             })
-            .addCase(updateDependence.rejected, (state) => {
-                state.hasError = true;
-                state.isUpdated = false;
-                state.isUpdating = false;
-            })
+            .addCase(
+                updateDependence.rejected,
+                (state, action: PayloadAction<any>) => {
+                    state.hasError = true;
+                    state.isUpdated = false;
+                    state.isUpdating = false;
+                    state.error = action.payload as string;
+                },
+            )
             .addCase(deleteDependence.fulfilled, (state) => {
                 state.isDeleted = true;
             });

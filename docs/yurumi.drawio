@@ -1,0 +1,49 @@
+<mxfile host="Electron" modified="2024-08-30T14:18:15.739Z" agent="Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/21.2.8 Chrome/112.0.5615.165 Electron/24.2.0 Safari/537.36" etag="8ih18ZP8Gc_kBUqLs-yy" version="21.2.8" type="device">
+  <diagram name="Página-1" id="iCga6J3iyX_Q8S5CAMcA">
+    <mxGraphModel dx="1434" dy="775" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="nyEc1jtxAVJ3KUIJrYbC-1" value="User&lt;br&gt;" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;" vertex="1" parent="1">
+          <mxGeometry x="100" y="390" width="30" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="nyEc1jtxAVJ3KUIJrYbC-2" value="auth&lt;br&gt;HTTP 7001&lt;br&gt;TCP 7002&lt;br&gt;" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="300" y="360" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="nyEc1jtxAVJ3KUIJrYbC-3" value="POST &lt;br&gt;login" style="endArrow=classic;startArrow=classic;html=1;rounded=0;exitX=-0.042;exitY=0.383;exitDx=0;exitDy=0;exitPerimeter=0;" edge="1" parent="1" source="nyEc1jtxAVJ3KUIJrYbC-2" target="nyEc1jtxAVJ3KUIJrYbC-1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="348" y="385" as="sourcePoint" />
+            <mxPoint x="108" y="239.11764705882354" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="nyEc1jtxAVJ3KUIJrYbC-4" value="MongoDB" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=15;" vertex="1" parent="1">
+          <mxGeometry x="630" y="350" width="60" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="nyEc1jtxAVJ3KUIJrYbC-5" value="users" style="endArrow=classic;startArrow=classic;html=1;rounded=0;entryX=0;entryY=0;entryDx=0;entryDy=52.5;entryPerimeter=0;exitX=1;exitY=0.5;exitDx=0;exitDy=0;" edge="1" parent="1" source="nyEc1jtxAVJ3KUIJrYbC-2" target="nyEc1jtxAVJ3KUIJrYbC-4">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="390" y="390" as="sourcePoint" />
+            <mxPoint x="440" y="340" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="nyEc1jtxAVJ3KUIJrYbC-6" value="notifications&lt;br&gt;TCP 7003" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="330" y="190" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="nyEc1jtxAVJ3KUIJrYbC-7" value="MessagePattern&lt;br&gt;notify_email" style="endArrow=classic;html=1;rounded=0;exitX=0.575;exitY=0.033;exitDx=0;exitDy=0;exitPerimeter=0;entryX=0.575;entryY=1.067;entryDx=0;entryDy=0;entryPerimeter=0;" edge="1" parent="1" source="nyEc1jtxAVJ3KUIJrYbC-2" target="nyEc1jtxAVJ3KUIJrYbC-6">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="390" y="380" as="sourcePoint" />
+            <mxPoint x="440" y="330" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="nyEc1jtxAVJ3KUIJrYbC-8" value="Gmail" style="ellipse;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="540" y="110" width="120" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="nyEc1jtxAVJ3KUIJrYbC-9" value="" style="endArrow=classic;html=1;rounded=0;exitX=1;exitY=0.25;exitDx=0;exitDy=0;" edge="1" parent="1" source="nyEc1jtxAVJ3KUIJrYbC-6" target="nyEc1jtxAVJ3KUIJrYbC-8">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="390" y="380" as="sourcePoint" />
+            <mxPoint x="440" y="330" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

@@ -34,7 +34,7 @@ export const CreateDependencePage = () => {
     const navigate = useNavigate();
 
     const dispatch = useDispatch<AppDispatch>();
-    const { isLoading, hasError, isCreated } = useSelector(
+    const { isLoading, hasError, isCreated, error } = useSelector(
         (state: RootState) => state.dependence,
     );
 
@@ -58,11 +58,19 @@ export const CreateDependencePage = () => {
                 <Box sx={{ width: 350, padding: '10px 20px' }}>
                     <Grid container spacing={2}>
                         <Grid item xs={12}>
-                            <Typography variant='h4' component='h4'>
+                            <Typography
+                                variant='h4'
+                                component='h4'
+                                textAlign='center'
+                            >
                                 Crear dependencia
                             </Typography>
                             <Chip
-                                label='Error creando la dependencia'
+                                label={`${
+                                    error === 'Bad Request error'
+                                        ? 'Registro existente'
+                                        : 'Error creando el registro'
+                                }`}
                                 color='error'
                                 icon={<ErrorOutline />}
                                 className='fadeIn'
@@ -172,18 +180,20 @@ export const CreateDependencePage = () => {
                             />
                         </Grid>
                         <Grid item xs={12}>
-                            <Button
-                                type='submit'
-                                variant='outlined'
-                                color='success'
-                                disabled={isLoading}
-                            >
-                                {isLoading ? (
-                                    <CircularProgress />
-                                ) : (
-                                    'Crear dependencia'
-                                )}
-                            </Button>
+                            <Box display='flex' justifyContent='center'>
+                                <Button
+                                    type='submit'
+                                    variant='outlined'
+                                    color='success'
+                                    disabled={isLoading}
+                                >
+                                    {isLoading ? (
+                                        <CircularProgress />
+                                    ) : (
+                                        'Crear dependencia'
+                                    )}
+                                </Button>
+                            </Box>
                         </Grid>
                     </Grid>
                 </Box>

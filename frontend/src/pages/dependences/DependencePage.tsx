@@ -23,6 +23,7 @@ import {
     dependenceTypes,
 } from '../../utils/handlers/dependences';
 import { DeleteDialog } from '../../components/ui/DeleteDialog';
+import { NotFoundPage } from '../../components/ui';
 
 export const DependencePage = () => {
     const params = useParams();
@@ -60,142 +61,152 @@ export const DependencePage = () => {
                 <CircularProgress />
             ) : (
                 <Card sx={{ minWidth: 275 }}>
-                    <CardContent>
-                        <Typography variant='h5' component='div'>
-                            {dependence?.shortName}
-                        </Typography>
-                        <Divider sx={{ padding: '.5rem', margin: '1rem' }} />
-                        <Grid container display='grid'>
-                            <Grid item display='flex'>
-                                <Typography
-                                    variant='h6'
-                                    component='h6'
-                                    sx={{
-                                        padding: '.5rem',
-                                        width: '30%',
-                                    }}
-                                >
-                                    Tipo de dependencia
+                    {dependence ? (
+                        <>
+                            <CardContent>
+                                <Typography variant='h5' component='div'>
+                                    {dependence?.shortName}
                                 </Typography>
-                                <Typography
-                                    variant='h6'
-                                    component='h6'
-                                    sx={{ padding: '.5rem' }}
-                                    color='text.secondary'
+                                <Divider
+                                    sx={{ padding: '.5rem', margin: '1rem' }}
+                                />
+                                <Grid container display='grid'>
+                                    <Grid item display='flex'>
+                                        <Typography
+                                            variant='h6'
+                                            component='h6'
+                                            sx={{
+                                                padding: '.5rem',
+                                                width: '30%',
+                                            }}
+                                        >
+                                            Tipo de dependencia
+                                        </Typography>
+                                        <Typography
+                                            variant='h6'
+                                            component='h6'
+                                            sx={{ padding: '.5rem' }}
+                                            color='text.secondary'
+                                        >
+                                            {dependenceTypes(
+                                                dependence?.type
+                                                    ? dependence.type
+                                                    : '',
+                                            )}
+                                        </Typography>
+                                    </Grid>
+                                    <Grid item display='flex'>
+                                        <Typography
+                                            variant='h6'
+                                            component='h6'
+                                            sx={{
+                                                padding: '.5rem',
+                                                width: '30%',
+                                            }}
+                                        >
+                                            Tipo documento
+                                        </Typography>
+                                        <Typography
+                                            variant='h6'
+                                            component='h6'
+                                            sx={{ padding: '.5rem' }}
+                                            color='text.secondary'
+                                        >
+                                            {dependence?.tributaryType}
+                                        </Typography>
+                                    </Grid>
+                                    <Grid item display='flex'>
+                                        <Typography
+                                            variant='h6'
+                                            component='h6'
+                                            sx={{
+                                                padding: '.5rem',
+                                                width: '30%',
+                                            }}
+                                        >
+                                            Doc. fiscal
+                                        </Typography>
+                                        <Typography
+                                            variant='h6'
+                                            component='h6'
+                                            sx={{ padding: '.5rem' }}
+                                            color='text.secondary'
+                                        >
+                                            {dependence?.tributaryId}
+                                        </Typography>
+                                    </Grid>
+                                    <Grid item display='flex'>
+                                        <Typography
+                                            variant='h6'
+                                            component='h6'
+                                            sx={{
+                                                padding: '.5rem',
+                                                width: '30%',
+                                            }}
+                                        >
+                                            Nombre completo
+                                        </Typography>
+                                        <Typography
+                                            variant='h6'
+                                            component='h6'
+                                            sx={{ padding: '.5rem' }}
+                                            color='text.secondary'
+                                        >
+                                            {dependence?.fullName}
+                                        </Typography>
+                                    </Grid>
+                                    <Grid item display='flex'>
+                                        <Typography
+                                            variant='h6'
+                                            component='h6'
+                                            sx={{
+                                                padding: '.5rem',
+                                                width: '30%',
+                                            }}
+                                        >
+                                            Estado
+                                        </Typography>
+                                        <Typography
+                                            variant='h6'
+                                            component='h6'
+                                            sx={{ padding: '.5rem' }}
+                                            color='text.secondary'
+                                        >
+                                            {dependenceStatus(
+                                                dependence?.status
+                                                    ? dependence.status
+                                                    : '',
+                                            )}
+                                        </Typography>
+                                    </Grid>
+                                </Grid>
+                            </CardContent>
+                            <CardActions
+                                sx={{
+                                    display: 'flex',
+                                    justifyContent: 'end',
+                                    margin: '1rem',
+                                }}
+                            >
+                                <Button
+                                    variant='outlined'
+                                    color='success'
+                                    href={`/dependences/update/${dependenceId}`}
                                 >
-                                    {dependenceTypes(
-                                        dependence?.type ? dependence.type : '',
-                                    )}
-                                </Typography>
-                            </Grid>
-                            <Grid item display='flex'>
-                                <Typography
-                                    variant='h6'
-                                    component='h6'
-                                    sx={{
-                                        padding: '.5rem',
-                                        width: '30%',
-                                    }}
+                                    Editar
+                                </Button>
+                                <Button
+                                    variant='outlined'
+                                    color='error'
+                                    onClick={handleOpenDeleteDialog}
                                 >
-                                    Tipo documento
-                                </Typography>
-                                <Typography
-                                    variant='h6'
-                                    component='h6'
-                                    sx={{ padding: '.5rem' }}
-                                    color='text.secondary'
-                                >
-                                    {dependence?.tributaryType}
-                                </Typography>
-                            </Grid>
-                            <Grid item display='flex'>
-                                <Typography
-                                    variant='h6'
-                                    component='h6'
-                                    sx={{
-                                        padding: '.5rem',
-                                        width: '30%',
-                                    }}
-                                >
-                                    Doc. fiscal
-                                </Typography>
-                                <Typography
-                                    variant='h6'
-                                    component='h6'
-                                    sx={{ padding: '.5rem' }}
-                                    color='text.secondary'
-                                >
-                                    {dependence?.tributaryId}
-                                </Typography>
-                            </Grid>
-                            <Grid item display='flex'>
-                                <Typography
-                                    variant='h6'
-                                    component='h6'
-                                    sx={{
-                                        padding: '.5rem',
-                                        width: '30%',
-                                    }}
-                                >
-                                    Nombre completo
-                                </Typography>
-                                <Typography
-                                    variant='h6'
-                                    component='h6'
-                                    sx={{ padding: '.5rem' }}
-                                    color='text.secondary'
-                                >
-                                    {dependence?.fullName}
-                                </Typography>
-                            </Grid>
-                            <Grid item display='flex'>
-                                <Typography
-                                    variant='h6'
-                                    component='h6'
-                                    sx={{
-                                        padding: '.5rem',
-                                        width: '30%',
-                                    }}
-                                >
-                                    Estado
-                                </Typography>
-                                <Typography
-                                    variant='h6'
-                                    component='h6'
-                                    sx={{ padding: '.5rem' }}
-                                    color='text.secondary'
-                                >
-                                    {dependenceStatus(
-                                        dependence?.status
-                                            ? dependence.status
-                                            : '',
-                                    )}
-                                </Typography>
-                            </Grid>
-                        </Grid>
-                    </CardContent>
-                    <CardActions
-                        sx={{
-                            display: 'flex',
-                            justifyContent: 'end',
-                            margin: '1rem',
-                        }}
-                    >
-                        <Button
-                            variant='outlined'
-                            color='success'
-                            href={`/dependences/update/${dependenceId}`}
-                        >
-                            Editar
-                        </Button>
-                        <Button
-                            variant='outlined'
-                            color='error'
-                            onClick={handleOpenDeleteDialog}
-                        >
-                            Eliminar
-                        </Button>
-                    </CardActions>
+                                    Eliminar
+                                </Button>
+                            </CardActions>
+                        </>
+                    ) : (
+                        <NotFoundPage />
+                    )}
                     <DeleteDialog
                         open={isOpenDeleteDialog}
                         handleClose={handleCloseDeleteDialog}
