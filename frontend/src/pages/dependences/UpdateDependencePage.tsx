@@ -25,6 +25,7 @@ import {
     listDependenceTypes,
     listTributaryTypes,
 } from '../../utils/handlers/dependences';
+import { BackButton } from '../../components/ui';
 
 type formData = {
     type: string;
@@ -231,7 +232,14 @@ export const UpdateDependencePage = () => {
                                 </TextField>
                             </Grid>
                             <Grid item xs={12}>
-                                <Box display='flex' justifyContent='center'>
+                                <Box
+                                    display='flex'
+                                    justifyContent='space-around'
+                                >
+                                    <BackButton
+                                        link='dependences'
+                                        disabled={isUpdating}
+                                    />
                                     <Button
                                         type='submit'
                                         variant='outlined'

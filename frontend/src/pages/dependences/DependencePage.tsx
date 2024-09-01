@@ -23,7 +23,7 @@ import {
     dependenceTypes,
 } from '../../utils/handlers/dependences';
 import { DeleteDialog } from '../../components/ui/DeleteDialog';
-import { NotFoundPage } from '../../components/ui';
+import { BackButton, NotFoundPage } from '../../components/ui';
 
 export const DependencePage = () => {
     const params = useParams();
@@ -188,6 +188,10 @@ export const DependencePage = () => {
                                     margin: '1rem',
                                 }}
                             >
+                                <BackButton
+                                    link='dependences'
+                                    disabled={false}
+                                />
                                 <Button
                                     variant='outlined'
                                     color='success'

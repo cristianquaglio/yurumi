@@ -21,6 +21,7 @@ import {
     listDependenceTypes,
     listTributaryTypes,
 } from '../../utils/handlers/dependences';
+import { BackButton } from '../../components/ui';
 
 type formData = {
     type: string;
@@ -180,7 +181,11 @@ export const CreateDependencePage = () => {
                             />
                         </Grid>
                         <Grid item xs={12}>
-                            <Box display='flex' justifyContent='center'>
+                            <Box display='flex' justifyContent='space-around'>
+                                <BackButton
+                                    link='dependences'
+                                    disabled={isLoading}
+                                />
                                 <Button
                                     type='submit'
                                     variant='outlined'
