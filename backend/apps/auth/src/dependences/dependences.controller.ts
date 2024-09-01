@@ -17,8 +17,8 @@ import { CreateDependenceDto, UpdateDependenceDto } from './dto';
 export class DependencesController {
   constructor(private readonly dependencesService: DependencesService) {}
 
-  // @UseGuards(JwtAuthGuard)
-  // @Roles(UserRoles.SA)
+  @UseGuards(JwtAuthGuard)
+  @Roles(UserRoles.SA)
   @Post()
   create(@Body() createDependenceDto: CreateDependenceDto) {
     return this.dependencesService.create(createDependenceDto);
@@ -34,8 +34,8 @@ export class DependencesController {
     return this.dependencesService.findOne(id);
   }
 
-  // @UseGuards(JwtAuthGuard)
-  // @Roles(UserRoles.SA)
+  @UseGuards(JwtAuthGuard)
+  @Roles(UserRoles.SA)
   @Patch(':id')
   update(
     @Param('id') id: string,
@@ -44,8 +44,8 @@ export class DependencesController {
     return this.dependencesService.update(id, updateDependenceDto);
   }
 
-  // @UseGuards(JwtAuthGuard)
-  // @Roles(UserRoles.SA)
+  @UseGuards(JwtAuthGuard)
+  @Roles(UserRoles.SA)
   @Delete(':id')
   remove(@Param('id') id: string) {
     return this.dependencesService.remove(id);
