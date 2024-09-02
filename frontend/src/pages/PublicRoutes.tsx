@@ -9,7 +9,7 @@ export const PublicRoutes: React.FC<PublicRoutesProps> = ({
     isAuthenticated,
 }) => {
     if (isAuthenticated) {
-        return <Navigate to='/' replace />;
+        return <Navigate to='/' />;
     }
 
     return <Outlet />;
