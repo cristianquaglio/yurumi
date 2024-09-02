@@ -2,15 +2,15 @@ import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import Cookies from 'js-cookie';
 
 import AuthService from '../services/authServices';
-import { IAdminUser, IUser } from '../../utils';
+import { IUser } from '../../utils';
 
 interface authState {
     user: IUser | undefined;
-    hasError: boolean;
+    isRegistered: boolean;
     isLoading: boolean;
+    hasError: boolean;
     isRecovered: boolean;
     isEmailConfirmed: boolean;
-    isRegistered: boolean;
     isPasswordChanged: boolean;
 }
 
@@ -26,28 +26,11 @@ const initialState: authState = {
     isPasswordChanged: false,
 };
 
-export const registerAdminUser = createAsyncThunk(
-    'auth/registerAdminUser',
-    async (user: IAdminUser, thunkAPI) => {
-        try {
-            return await AuthService.registerAdminUser(user);
-        } catch (error: any) {
-            const message =
-                (error.response &&
-                    error.response.data &&
-                    error.response.data.message) ||
-                error.message ||
-                error.toString();
-            return thunkAPI.rejectWithValue(message);
-        }
-    },
-);
-
-export const registerUser = createAsyncThunk(
-    'auth/registerUser',
+export const signup = createAsyncThunk(
+    'auth/signup',
     async (user: IUser, thunkAPI) => {
         try {
-            return await AuthService.registerUser(user);
+            return await AuthService.signup(user);
         } catch (error: any) {
             const message =
                 (error.response &&
@@ -202,34 +185,17 @@ export const authSlice = createSlice({
                 state.isEmailConfirmed = false;
                 state.isLoading = false;
             })
-
-            .addCase(registerAdminUser.fulfilled, (state) => {
+            .addCase(signup.fulfilled, (state) => {
                 state.hasError = false;
                 state.isRegistered = true;
                 state.isLoading = false;
             })
-            .addCase(registerAdminUser.pending, (state) => {
+            .addCase(signup.pending, (state) => {
                 state.hasError = false;
                 state.isRegistered = false;
                 state.isLoading = true;
             })
-            .addCase(registerAdminUser.rejected, (state) => {
-                state.hasError = true;
-                state.isRegistered = false;
-                state.isLoading = false;
-            })
-
-            .addCase(registerUser.fulfilled, (state) => {
-                state.hasError = false;
-                state.isRegistered = true;
-                state.isLoading = false;
-            })
-            .addCase(registerUser.pending, (state) => {
-                state.hasError = false;
-                state.isRegistered = false;
-                state.isLoading = true;
-            })
-            .addCase(registerUser.rejected, (state) => {
+            .addCase(signup.rejected, (state) => {
                 state.hasError = true;
                 state.isRegistered = false;
                 state.isLoading = false;

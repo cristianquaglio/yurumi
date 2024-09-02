@@ -43,9 +43,11 @@ export class AuthService {
     createUserDto: CreateUserDto,
   ) {
     const { dependence } = createUserPayload;
-    const isAdmin = await this.usersService.dependenceHasUsers(dependence);
+    const hasAdmin = await this.usersService.dependenceHasUsers(
+      createUserPayload,
+    );
     let returnedUser: UserDocument;
-    if (!isAdmin)
+    if (!hasAdmin)
       returnedUser = await this.usersService.create(dependence, {
         ...createUserDto,
         roles: [UserRoles.ADMINISTRATOR],

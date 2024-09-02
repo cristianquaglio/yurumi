@@ -11,6 +11,7 @@ interface userState {
     isUpdating: boolean;
     isUpdated: boolean;
     isDeleted: boolean;
+    hasAdmin: boolean;
 }
 
 const initialState: userState = {
@@ -21,6 +22,7 @@ const initialState: userState = {
     isUpdating: false,
     isUpdated: false,
     isDeleted: false,
+    hasAdmin: false,
 };
 
 export const findAllAdminUsers = createAsyncThunk(
@@ -132,6 +134,17 @@ export const deleteUser = createAsyncThunk(
     },
 );
 
+export const checkAdmin = createAsyncThunk(
+    'user/checkAdmin',
+    async (dependence: string) => {
+        try {
+            return await UserService.checkAdmin(dependence);
+        } catch (error) {
+            return undefined;
+        }
+    },
+);
+
 export const userSlice = createSlice({
     name: 'user',
     initialState,
@@ -207,6 +220,9 @@ export const userSlice = createSlice({
             })
             .addCase(deleteUser.fulfilled, (state) => {
                 state.isDeleted = true;
+            })
+            .addCase(checkAdmin.fulfilled, (state, action) => {
+                state.hasAdmin = action.payload;
             });
     },
 });

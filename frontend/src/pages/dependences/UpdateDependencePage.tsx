@@ -20,11 +20,7 @@ import {
     findDependence,
     updateDependence,
 } from '../../redux/slices/dependenceSlice';
-import {
-    listDependenceStatus,
-    listDependenceTypes,
-    listTributaryTypes,
-} from '../../utils/handlers/dependences';
+import { listDependenceStatus, listDependenceTypes, listTributaryTypes } from '../../utils';
 import { BackButton } from '../../components/ui';
 
 type formData = {

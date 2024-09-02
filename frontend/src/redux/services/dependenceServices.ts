@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 import { api } from '../../api';
-import { IDependence } from '../../utils/interfaces';
+import { IDependence } from '../../utils';
 
 const findAllDependences = async () => {
     try {

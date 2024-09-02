@@ -74,6 +74,17 @@ const deleteUser = async (userId: string) => {
     }
 };
 
+const checkAdmin = async (dependence: string) => {
+    try {
+        const { data } = await api.get(
+            `/users/check-admin?dependence=${dependence}`,
+        );
+        return data;
+    } catch (error) {
+        return;
+    }
+};
+
 const UserService = {
     findAllAdminUsers,
     findOneAdminUser,
@@ -83,6 +94,7 @@ const UserService = {
     findOneUser,
     updateUser,
     deleteUser,
+    checkAdmin,
 };
 
 export default UserService;

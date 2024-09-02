@@ -17,10 +17,7 @@ import { MainLayout } from '../../components/layouts';
 import { useDispatch, useSelector } from 'react-redux';
 import { AppDispatch, RootState } from '../../store/store';
 import { createDependence } from '../../redux/slices/dependenceSlice';
-import {
-    listDependenceTypes,
-    listTributaryTypes,
-} from '../../utils/handlers/dependences';
+import { listDependenceTypes, listTributaryTypes } from '../../utils';
 import { BackButton } from '../../components/ui';
 
 type formData = {

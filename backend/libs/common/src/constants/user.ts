@@ -15,6 +15,7 @@ export enum UserRoles {
   PATIENT = 'PATIENT',
   TECHNICIAN = 'TECHNICIAN',
   DIRECTIVE = 'DIRECTIVE',
+  USER = 'USER',
 }
 
 export enum RestrictedRoles {
@@ -23,4 +24,5 @@ export enum RestrictedRoles {
   PATIENT = 'PATIENT',
   TECHNICIAN = 'TECHNICIAN',
   DIRECTIVE = 'DIRECTIVE',
+  USER = 'USER',
 }

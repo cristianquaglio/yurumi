@@ -8,6 +8,7 @@ import {
   Delete,
   UseGuards,
   Req,
+  Query,
 } from '@nestjs/common';
 
 import {
@@ -19,6 +20,7 @@ import {
 } from '@app/common';
 import { UsersService } from './users.service';
 import { UpdateUserDto } from './dto';
+import { ICreateUserPayload } from './interfaces';
 
 @Controller('users')
 export class UsersController {
@@ -28,6 +30,11 @@ export class UsersController {
   @Get('current')
   getUser(@CurrentUSer() user: UserDocument) {
     return user;
+  }
+
+  @Get('check-admin')
+  checkAdmin(@Query() createUserPayload: ICreateUserPayload) {
+    return this.usersService.dependenceHasUsers(createUserPayload);
   }
 
   @UseGuards(JwtAuthGuard)

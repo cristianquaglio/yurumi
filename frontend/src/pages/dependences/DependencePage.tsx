@@ -18,10 +18,7 @@ import {
     deleteDependence,
     findDependence,
 } from '../../redux/slices/dependenceSlice';
-import {
-    dependenceStatus,
-    dependenceTypes,
-} from '../../utils/handlers/dependences';
+import { dependenceStatus, dependenceTypes } from '../../utils';
 import { DeleteDialog } from '../../components/ui/DeleteDialog';
 import { BackButton, NotFoundPage } from '../../components/ui';
 

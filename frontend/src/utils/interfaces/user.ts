@@ -1,12 +1,9 @@
-export interface IUser extends IAdminUser {
-    id?: string;
-    roles?: string[];
-    status?: string;
-}
-
-export interface IAdminUser {
+export interface IUser {
     firstName: string;
     lastName: string;
+    username: string;
     email: string;
-    company?: string;
+    password: string;
+    dependence: string;
+    roles: string[] | undefined;
 }

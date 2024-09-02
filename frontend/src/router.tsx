@@ -15,7 +15,7 @@ import {
     UpdateDependencePage,
 } from './pages';
 
-const isAuthenticated = true;
+const isAuthenticated = false;
 
 const router = createBrowserRouter([
     {

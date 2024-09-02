@@ -1,7 +1,7 @@
 import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
 
-import { IDependence } from '../../utils/interfaces';
 import DependenceService from '../services/dependenceServices';
+import { IDependence } from '../../utils';
 
 interface dependenceState {
     dependences: IDependence[];

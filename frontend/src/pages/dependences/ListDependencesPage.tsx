@@ -22,11 +22,7 @@ import {
     deleteDependence,
     findAllDependences,
 } from '../../redux/slices/dependenceSlice';
-import { IDependence } from '../../utils/interfaces';
-import {
-    dependenceStatus,
-    dependenceTypes,
-} from '../../utils/handlers/dependences';
+import { dependenceStatus, dependenceTypes, IDependence } from '../../utils';
 import { DeleteDialog } from '../../components/ui/DeleteDialog';
 
 const Search = styled('div')(({ theme }) => ({

@@ -13,6 +13,7 @@ import {
   ChangePasswordDto,
 } from './dto';
 import { UsersRepository } from './users.repository';
+import { ICreateUserPayload } from './interfaces';
 
 @Injectable()
 export class UsersService {
@@ -89,7 +90,7 @@ export class UsersService {
     return await this.usersRepository.findOne({ _id, dependence });
   }
 
-  async dependenceHasUsers(dependence: string) {
+  async dependenceHasUsers({ dependence }: ICreateUserPayload) {
     try {
       await this.usersRepository.findOne({ dependence });
     } catch (error) {

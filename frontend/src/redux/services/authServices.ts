@@ -1,20 +1,14 @@
 import axios from 'axios';
 
 import { api } from '../../api';
-import { IAdminUser, IUser } from '../../utils';
+import { IUser } from '../../utils';
 
-const registerAdminUser = async (user: IAdminUser) => {
+const signup = async (user: IUser) => {
     try {
-        const { data } = await api.post(`/auth/register-admin`, user);
-        return data;
-    } catch (error: any) {
-        if (axios.isAxiosError(error)) throw new Error(`Bad Request error`);
-    }
-};
-
-const registerUser = async (user: IUser) => {
-    try {
-        const { data } = await api.post(`/auth/register`, user);
+        const { data } = await api.post(
+            `/auth/signup?dependence=${user.dependence}`,
+            user,
+        );
         return data;
     } catch (error: any) {
         if (axios.isAxiosError(error)) throw new Error(`Bad Request error`);
@@ -55,8 +49,7 @@ const logout = async () => {
 };
 
 const AuthService = {
-    registerAdminUser,
-    registerUser,
+    signup,
     login,
     confirmEmail,
     recoverAccount,
