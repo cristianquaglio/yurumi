@@ -10,7 +10,7 @@ interface authState {
     isLoading: boolean;
     hasError: boolean;
     isRecovered: boolean;
-    isEmailConfirmed: boolean;
+    isEmailActivated: boolean;
     isPasswordChanged: boolean;
 }
 
@@ -19,7 +19,7 @@ const initialState: authState = {
         ? JSON.parse(Cookies.get('user') as string)
         : undefined,
     hasError: false,
-    isEmailConfirmed: false,
+    isEmailActivated: false,
     isLoading: false,
     isRecovered: false,
     isRegistered: false,
@@ -76,11 +76,11 @@ export const login = createAsyncThunk(
     },
 );
 
-export const confirmEmail = createAsyncThunk(
-    'auth/confirm-email',
+export const emailActivation = createAsyncThunk(
+    'auth/email-activation',
     async ({ token }: { token: string }, thunkAPI) => {
         try {
-            return await AuthService.confirmEmail(token);
+            return await AuthService.emailActivation(token);
         } catch (error: any) {
             const message =
                 (error.response &&
@@ -170,19 +170,19 @@ export const authSlice = createSlice({
                 state.isRecovered = true;
                 state.isLoading = false;
             })
-            .addCase(confirmEmail.fulfilled, (state) => {
+            .addCase(emailActivation.fulfilled, (state) => {
                 state.hasError = false;
-                state.isEmailConfirmed = true;
+                state.isEmailActivated = true;
                 state.isLoading = false;
             })
-            .addCase(confirmEmail.pending, (state) => {
+            .addCase(emailActivation.pending, (state) => {
                 state.hasError = false;
-                state.isEmailConfirmed = false;
+                state.isEmailActivated = false;
                 state.isLoading = true;
             })
-            .addCase(confirmEmail.rejected, (state) => {
+            .addCase(emailActivation.rejected, (state) => {
                 state.hasError = true;
-                state.isEmailConfirmed = false;
+                state.isEmailActivated = false;
                 state.isLoading = false;
             })
             .addCase(signup.fulfilled, (state) => {

@@ -56,7 +56,7 @@ export class UsersService {
       throw new BadRequestException(`This link does not work anymore`);
     return await this.usersRepository.findOneAndUpdate(
       { email },
-      { status: UserStatus.ACCOUNT_VALIDATION_PENDING },
+      { status: UserStatus.ACTIVE },
     );
   }
 

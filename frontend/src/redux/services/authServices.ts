@@ -25,8 +25,8 @@ const login = async (email: string, password: string) => {
     return { token, refreshToken, user };
 };
 
-const confirmEmail = async (token: string) => {
-    return await api.get(`/auth/confirm-email?token=${token}`);
+const emailActivation = async (token: string) => {
+    return await api.get(`/auth/email-activation?token=${token}`);
 };
 
 const recoverAccount = async (email: string) => {
@@ -51,7 +51,7 @@ const logout = async () => {
 const AuthService = {
     signup,
     login,
-    confirmEmail,
+    emailActivation,
     recoverAccount,
     changePassword,
     logout,

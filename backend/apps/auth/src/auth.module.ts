@@ -24,7 +24,7 @@ import { JwtStrategy, LocalStrategy } from './strategies';
         JWT_REFRESH_EXPIRATION: Joi.string().required(),
         HTTP_PORT: Joi.number().required(),
         TCP_PORT: Joi.number().required(),
-        AUTH_URI: Joi.string().required(),
+        FRONTEND_URI: Joi.string().required(),
         EMAIL_VERIFICATION_TOKEN: Joi.string().required(),
         EMAIL_VERIFICATION_EXPIRATION_TIME: Joi.string().required(),
         NOTIFICATIONS_HOST: Joi.string().required(),

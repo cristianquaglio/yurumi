@@ -9,12 +9,10 @@ import theme from './themes/dark-theme';
 import { store } from './store/store';
 
 createRoot(document.getElementById('root')!).render(
-    <StrictMode>
-        <Provider store={store}>
-            <ThemeProvider theme={theme}>
-                <CssBaseline />
-                <RouterProvider router={router}></RouterProvider>
-            </ThemeProvider>
-        </Provider>
-    </StrictMode>,
+    <Provider store={store}>
+        <ThemeProvider theme={theme}>
+            <CssBaseline />
+            <RouterProvider router={router}></RouterProvider>
+        </ThemeProvider>
+    </Provider>,
 );

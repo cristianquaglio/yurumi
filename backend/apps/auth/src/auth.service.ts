@@ -60,7 +60,7 @@ export class AuthService {
 
     const token = this.createNotificationToken(email);
     const uri = `${this.configService.get(
-      'AUTH_URI',
+      'FRONTEND_URI',
     )}/email-activation?token=${token}`;
     this.notificationsService.emit('notify_email', {
       email,
