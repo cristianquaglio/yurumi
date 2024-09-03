@@ -16,13 +16,17 @@ const signup = async (user: IUser) => {
 };
 
 const login = async (email: string, password: string) => {
-    const { data } = await api.post(`/auth/login`, {
-        email,
-        password,
-    });
-    const { tokens, user } = data;
-    const { token, refreshToken } = tokens;
-    return { token, refreshToken, user };
+    try {
+        const { data } = await api.post(`/auth/login`, {
+            email,
+            password,
+        });
+        if (!data) throw new Error(`Credentials are not valid`);
+        return data;
+    } catch (error: any) {
+        if (axios.isAxiosError(error)) throw new Error(`Bad Request error`);
+        else throw new Error(`Credentials are not valid`);
+    }
 };
 
 const emailActivation = async (token: string) => {

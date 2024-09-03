@@ -2,10 +2,10 @@ import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import Cookies from 'js-cookie';
 
 import AuthService from '../services/authServices';
-import { IUser } from '../../utils';
+import { ILoginPayload, IUser } from '../../utils';
 
 interface authState {
-    user: IUser | undefined;
+    user: ILoginPayload | undefined;
     isRegistered: boolean;
     isLoading: boolean;
     hasError: boolean;
@@ -50,19 +50,12 @@ export const login = createAsyncThunk(
         thunkAPI,
     ) => {
         try {
-            const { token, refreshToken, user } = await AuthService.login(
-                email,
-                password,
-            );
-            Cookies.set('token', token, { secure: true, sameSite: 'None' });
-            Cookies.set('refresh-token', refreshToken, {
-                secure: true,
-                sameSite: 'None',
-            });
+            const user = await AuthService.login(email, password);
             Cookies.set('user', JSON.stringify(user), {
                 secure: true,
                 sameSite: 'None',
             });
+            console.log({ user });
             return { user };
         } catch (error: any) {
             const message =
@@ -71,6 +64,7 @@ export const login = createAsyncThunk(
                     error.response.data.message) ||
                 error.message ||
                 error.toString();
+            console.log({ message });
             return thunkAPI.rejectWithValue(message);
         }
     },
@@ -139,22 +133,21 @@ export const authSlice = createSlice({
     extraReducers: (builder) => {
         builder
             .addCase(login.fulfilled, (state, action) => {
-                state.hasError = false;
                 state.user = action.payload.user;
+                state.hasError = false;
                 state.isLoading = false;
             })
             .addCase(login.pending, (state) => {
-                state.hasError = false;
                 state.user = undefined;
+                state.hasError = false;
                 state.isLoading = true;
             })
             .addCase(login.rejected, (state) => {
-                state.hasError = true;
                 state.user = undefined;
+                state.hasError = true;
                 state.isLoading = false;
             })
             .addCase(logout.fulfilled, (state) => {
-                state.user = undefined;
                 state.hasError = false;
                 state.isLoading = false;
             })

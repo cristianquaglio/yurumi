@@ -15,11 +15,9 @@ import {
     UpdateDependencePage,
 } from './pages';
 
-const isAuthenticated = false;
-
 const router = createBrowserRouter([
     {
-        element: <PublicRoutes isAuthenticated={isAuthenticated} />,
+        element: <PublicRoutes />,
         children: [
             {
                 path: '/signup',
@@ -40,7 +38,7 @@ const router = createBrowserRouter([
         ],
     },
     {
-        element: <PrivateRoutes isAuthenticated={isAuthenticated} />,
+        element: <PrivateRoutes />,
         children: [
             {
                 path: '/change-password',

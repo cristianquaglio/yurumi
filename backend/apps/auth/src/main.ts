@@ -9,7 +9,7 @@ import { Logger } from 'nestjs-pino';
 import { AuthModule } from './auth.module';
 
 async function main() {
-  const app = await NestFactory.create(AuthModule, { cors: true });
+  const app = await NestFactory.create(AuthModule);
 
   const config = new DocumentBuilder()
     .setTitle('Auth API')
@@ -35,6 +35,10 @@ async function main() {
 
   app.useLogger(app.get(Logger));
   await app.startAllMicroservices();
+  app.enableCors({
+    origin: configService.get('FRONTEND_URI'),
+    credentials: true,
+  });
   await app.listen(configService.get('HTTP_PORT'));
 }
 main();

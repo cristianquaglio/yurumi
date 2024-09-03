@@ -1,15 +1,14 @@
 import React from 'react';
+import { useSelector } from 'react-redux';
 import { Navigate, Outlet } from 'react-router-dom';
 
-interface PublicRoutesProps {
-    isAuthenticated: boolean;
-}
+import { RootState } from '../store/store';
 
-export const PublicRoutes: React.FC<PublicRoutesProps> = ({
-    isAuthenticated,
-}) => {
-    if (isAuthenticated) {
-        return <Navigate to='/' />;
+export const PublicRoutes: React.FC = () => {
+    const { user } = useSelector((state: RootState) => state.auth);
+
+    if (user?.firstName) {
+        return <Navigate replace to='/' />;
     }
 
     return <Outlet />;

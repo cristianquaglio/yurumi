@@ -22,6 +22,7 @@ import {
   CreateUserDto,
   ICreateUserPayload,
   IEmailActivationPayload,
+  ILoginResponse,
   UsersService,
 } from './users';
 import { RecoverAccountDto } from './dto';
@@ -97,11 +98,22 @@ export class AuthService {
     }
   }
 
-  async login(user: UserDocument, response: Response) {
+  async login(user: UserDocument, response: Response): Promise<ILoginResponse> {
     const refreshToken = await this.generateTokens(user, response);
     await this.usersService.updateCurrentUser(user._id.toString(), {
       refreshToken,
     });
+    return {
+      _id: user._id.toString(),
+      firstName: user.firstName,
+      lastName: user.lastName,
+      username: user?.username,
+      email: user.email,
+      dependence: user.dependence,
+      roles: user.roles,
+      status: user.status,
+      isPasswordChanged: user?.isPasswordChanged,
+    };
   }
 
   async changePassword(_id: string, changePasswordDto: ChangePasswordDto) {
@@ -177,10 +189,14 @@ export class AuthService {
     const refreshToken = this.jwtService.sign(refreshTokenPayload);
     response.cookie('Authentication', token, {
       httpOnly: true,
+      secure: false,
+      // sameSite: 'strict',
       expires: tokenExpiration,
     });
     response.cookie('RefreshToken', refreshToken, {
       httpOnly: true,
+      secure: false,
+      // sameSite: 'strict',
       expires: refreshTokenExpiration,
     });
     return refreshToken;
