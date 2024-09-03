@@ -110,13 +110,19 @@ export const LoginPage = () => {
                             </Button>
                         </Grid>
                         <Divider sx={{ width: '100%', mb: 2, mt: 2 }} />
-                        <Grid item xs={12} display='flex' justifyContent='end'>
-                            <Link href='/signup' underline='none'>
-                                Crear una cuenta
-                            </Link>
-                            <Link href='/recover-account' underline='none'>
-                                Olvidó su clave?
-                            </Link>
+                        <Grid item xs={12} margin='none'>
+                            <Box display='flex' justifyContent='space-between'>
+                                <Link href='/signup' underline='none'>
+                                    <Button color='success'>
+                                        Crear cuenta
+                                    </Button>
+                                </Link>
+                                <Link href='/recover-account' underline='none'>
+                                    <Button color='error'>
+                                        Olvidó su clave?
+                                    </Button>
+                                </Link>
+                            </Box>
                         </Grid>
                     </Grid>
                 </Box>

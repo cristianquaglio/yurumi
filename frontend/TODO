@@ -6,6 +6,4 @@
     auth:
         signup OK
         email-activation OK
-        Doing login ...
-        
-        
+        login OK

@@ -234,18 +234,33 @@ export const SignUpPage: React.FC = () => {
                             </Grid>
                         )}
                         <Grid item xs={12}>
-                            <Button
-                                type='submit'
-                                variant='outlined'
-                                color='success'
-                                disabled={isLoading}
-                            >
-                                {isLoading ? (
-                                    <CircularProgress />
-                                ) : (
-                                    'Registrar usuario'
-                                )}
-                            </Button>
+                            <Box display='flex' justifyContent='space-between'>
+                                <Button
+                                    type='submit'
+                                    // variant='outlined'
+                                    color='success'
+                                    disabled={isLoading}
+                                >
+                                    {isLoading ? (
+                                        <CircularProgress />
+                                    ) : (
+                                        'Registrar usuario'
+                                    )}
+                                </Button>
+                                <Button
+                                    type='button'
+                                    // variant='outlined'
+                                    href='/login'
+                                    color='warning'
+                                    disabled={isLoading}
+                                >
+                                    {isLoading ? (
+                                        <CircularProgress />
+                                    ) : (
+                                        'Ya tiene una cuenta?'
+                                    )}
+                                </Button>
+                            </Box>
                         </Grid>
                     </Grid>
                 </Box>
