@@ -55,7 +55,6 @@ export const login = createAsyncThunk(
                 secure: true,
                 sameSite: 'None',
             });
-            console.log({ user });
             return { user };
         } catch (error: any) {
             const message =
@@ -64,7 +63,6 @@ export const login = createAsyncThunk(
                     error.response.data.message) ||
                 error.message ||
                 error.toString();
-            console.log({ message });
             return thunkAPI.rejectWithValue(message);
         }
     },

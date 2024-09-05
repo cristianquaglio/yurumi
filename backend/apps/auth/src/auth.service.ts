@@ -99,10 +99,7 @@ export class AuthService {
   }
 
   async login(user: UserDocument, response: Response): Promise<ILoginResponse> {
-    const refreshToken = await this.generateTokens(user, response);
-    await this.usersService.updateCurrentUser(user._id.toString(), {
-      refreshToken,
-    });
+    await this.refreshTokens(user._id.toString(), response);
     return {
       _id: user._id.toString(),
       firstName: user.firstName,
@@ -122,11 +119,20 @@ export class AuthService {
 
   async refreshTokens(_id: string, response: Response) {
     const user = await this.usersService.getUser({ _id });
-    const refreshToken = await this.generateTokens(user, response);
-    await this.usersService.updateCurrentUser(user._id.toString(), {
+    const { accessToken, refreshToken } = await this.getTokens(user);
+    await this.usersService.updateCurrentUser(_id, {
       refreshToken,
     });
-    return { statusCode: 204, message: 'Refresh token done' };
+    response.cookie('Authentication', accessToken, {
+      httpOnly: true,
+      secure: false,
+      maxAge: 900000,
+    });
+    response.cookie('RefreshToken', refreshToken, {
+      httpOnly: true,
+      secure: false,
+      maxAge: 604800000,
+    });
   }
 
   async recoverAccount(recoverAccountDto: RecoverAccountDto) {
@@ -168,38 +174,25 @@ export class AuthService {
     if (user) return { statusCode: 200, message: 'User logged out' };
   }
 
-  private async generateTokens(user: UserDocument, response: Response) {
-    const tokenPayload = {
+  private generateAccessToken(payload: any) {
+    return this.jwtService.sign(payload, {
+      expiresIn: this.configService.get('JWT_EXPIRATION'),
+    });
+  }
+
+  private generateRefreshToken(payload: any) {
+    return this.jwtService.sign(payload, {
+      expiresIn: this.configService.get('JWT_REFRESH_EXPIRATION'),
+    });
+  }
+
+  private async getTokens(user: UserDocument) {
+    const payload = {
       userId: user._id.toHexString(),
     };
-    const refreshTokenPayload = {
-      userId: user._id.toHexString(),
-    };
-    const tokenExpiration = new Date();
-    tokenExpiration.setSeconds(
-      tokenExpiration.getSeconds() +
-        this.configService.get<number>('JWT_EXPIRATION'),
-    );
-    const refreshTokenExpiration = new Date();
-    refreshTokenExpiration.setSeconds(
-      refreshTokenExpiration.getSeconds() +
-        this.configService.get<number>('JWT_REFRESH_EXPIRATION'),
-    );
-    const token = this.jwtService.sign(tokenPayload);
-    const refreshToken = this.jwtService.sign(refreshTokenPayload);
-    response.cookie('Authentication', token, {
-      httpOnly: true,
-      secure: false,
-      // sameSite: 'strict',
-      expires: tokenExpiration,
-    });
-    response.cookie('RefreshToken', refreshToken, {
-      httpOnly: true,
-      secure: false,
-      // sameSite: 'strict',
-      expires: refreshTokenExpiration,
-    });
-    return refreshToken;
+    const accessToken = this.generateAccessToken(payload);
+    const refreshToken = this.generateRefreshToken(payload);
+    return { accessToken, refreshToken };
   }
 
   private async extractEmailFromToken(token: string) {

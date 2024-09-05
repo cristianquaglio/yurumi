@@ -18,6 +18,12 @@ export const MultipleCheck: FC<Props> = ({ data, handleSelect }) => {
     return data.map(({ id, value }) => (
         <FormControlLabel
             key={id}
+            sx={{
+                display: 'flex',
+                flexWrap: 'wrap',
+                alignContent: 'center',
+                alignItems: 'stretch',
+            }}
             control={
                 <Checkbox
                     key={id}
