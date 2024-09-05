@@ -133,6 +133,7 @@ export class AuthService {
       secure: false,
       maxAge: 604800000,
     });
+    return { statusCode: 200, message: 'Refresh token done' };
   }
 
   async recoverAccount(recoverAccountDto: RecoverAccountDto) {
