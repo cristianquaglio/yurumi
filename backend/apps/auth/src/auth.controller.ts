@@ -95,19 +95,9 @@ export class AuthController {
   @Post('login')
   @ApiOperation({ summary: 'User logged in' })
   @ApiResponse({
-    status: 201,
+    status: 200,
     description: 'User logged in',
-    example: {
-      _id: '66d63dea8dad4d74487b34bc',
-      firstName: 'Cristian',
-      lastName: 'Quagliozzi',
-      username: 'cristian.q',
-      email: 'cristianquaglio@gmail.com',
-      dependence: '66d1d6d78cfc99e93c2f5f84',
-      roles: ['ADMINISTRATOR'],
-      status: 'ACTIVE',
-      isPasswordChanged: false,
-    },
+    example: { statusCode: 200, message: 'User logged in' },
   })
   @ApiResponse({
     status: 401,
@@ -132,8 +122,9 @@ export class AuthController {
     @CurrentUSer() user: UserDocument,
     @Res({ passthrough: true }) response: Response,
   ) {
-    const loggedUser = await this.authService.login(user, response);
-    response.send(loggedUser);
+    let { statusCode, message } = await this.authService.login(user, response);
+    message = 'User logged in';
+    response.send({ statusCode, message });
   }
 
   @UseGuards(JwtAuthGuard)

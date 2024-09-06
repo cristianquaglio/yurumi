@@ -12,6 +12,7 @@ import * as bcrypt from 'bcryptjs';
 
 import {
   generatePassword,
+  IApiResponse,
   NOTIFICATIONS_SERVICE,
   UserDocument,
   UserRoles,
@@ -22,7 +23,6 @@ import {
   CreateUserDto,
   ICreateUserPayload,
   IEmailActivationPayload,
-  ILoginResponse,
   UsersService,
 } from './users';
 import { RecoverAccountDto } from './dto';
@@ -98,19 +98,8 @@ export class AuthService {
     }
   }
 
-  async login(user: UserDocument, response: Response): Promise<ILoginResponse> {
-    await this.refreshTokens(user._id.toString(), response);
-    return {
-      _id: user._id.toString(),
-      firstName: user.firstName,
-      lastName: user.lastName,
-      username: user?.username,
-      email: user.email,
-      dependence: user.dependence,
-      roles: user.roles,
-      status: user.status,
-      isPasswordChanged: user?.isPasswordChanged,
-    };
+  async login(user: UserDocument, response: Response): Promise<IApiResponse> {
+    return await this.refreshTokens(user._id.toString(), response);
   }
 
   async changePassword(_id: string, changePasswordDto: ChangePasswordDto) {

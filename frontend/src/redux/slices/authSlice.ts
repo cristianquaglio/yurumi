@@ -2,10 +2,10 @@ import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import Cookies from 'js-cookie';
 
 import AuthService from '../services/authServices';
-import { ILoginPayload, IUser } from '../../utils';
+import { IUser } from '../../utils';
 
 interface authState {
-    user: ILoginPayload | undefined;
+    isLogged: boolean;
     isRegistered: boolean;
     isLoading: boolean;
     hasError: boolean;
@@ -15,9 +15,7 @@ interface authState {
 }
 
 const initialState: authState = {
-    user: Cookies.get('user')
-        ? JSON.parse(Cookies.get('user') as string)
-        : undefined,
+    isLogged: false,
     hasError: false,
     isEmailActivated: false,
     isLoading: false,
@@ -50,12 +48,9 @@ export const login = createAsyncThunk(
         thunkAPI,
     ) => {
         try {
-            const user = await AuthService.login(email, password);
-            Cookies.set('user', JSON.stringify(user), {
-                secure: true,
-                sameSite: 'None',
-            });
-            return { user };
+            const { statusCode } = await AuthService.login(email, password);
+            if (statusCode === 200) return;
+            throw new Error();
         } catch (error: any) {
             const message =
                 (error.response &&
@@ -130,18 +125,18 @@ export const authSlice = createSlice({
     reducers: {},
     extraReducers: (builder) => {
         builder
-            .addCase(login.fulfilled, (state, action) => {
-                state.user = action.payload.user;
+            .addCase(login.fulfilled, (state) => {
+                state.isLogged = true;
                 state.hasError = false;
                 state.isLoading = false;
             })
             .addCase(login.pending, (state) => {
-                state.user = undefined;
+                state.isLogged = false;
                 state.hasError = false;
                 state.isLoading = true;
             })
             .addCase(login.rejected, (state) => {
-                state.user = undefined;
+                state.isLogged = false;
                 state.hasError = true;
                 state.isLoading = false;
             })

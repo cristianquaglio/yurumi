@@ -1,15 +1,22 @@
-import React from 'react';
-import { useSelector } from 'react-redux';
+import React, { useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import { Navigate, Outlet } from 'react-router-dom';
+import { CircularProgress } from '@mui/material';
 
-import { RootState } from '../store/store';
+import { AppDispatch, RootState } from '../store/store';
+import { getCurrentUser } from '../redux/slices/userSlice';
 
 export const PublicRoutes: React.FC = () => {
-    const { user } = useSelector((state: RootState) => state.auth);
+    const dispatch = useDispatch<AppDispatch>();
+    const { currentUser, isLoading } = useSelector(
+        (state: RootState) => state.user,
+    );
 
-    if (user?.firstName) {
-        return <Navigate replace to='/' />;
-    }
+    useEffect(() => {
+        dispatch(getCurrentUser());
+    }, [dispatch]);
 
-    return <Outlet />;
+    if (isLoading) return <CircularProgress />;
+
+    return currentUser ? <Navigate replace to='/' /> : <Outlet />;
 };

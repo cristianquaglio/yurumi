@@ -4,6 +4,7 @@ import UserService from '../services/userServices';
 import { IUser } from '../../utils';
 
 interface userState {
+    currentUser: IUser | undefined;
     users: IUser[];
     user: IUser | undefined;
     isLoading: boolean;
@@ -15,6 +16,7 @@ interface userState {
 }
 
 const initialState: userState = {
+    currentUser: undefined,
     users: [],
     user: undefined,
     isLoading: false,
@@ -24,6 +26,17 @@ const initialState: userState = {
     isDeleted: false,
     hasAdmin: false,
 };
+
+export const getCurrentUser = createAsyncThunk(
+    'user/getCurrentUser',
+    async () => {
+        try {
+            return await UserService.getCurrentUser();
+        } catch (error) {
+            return undefined;
+        }
+    },
+);
 
 export const findAllAdminUsers = createAsyncThunk(
     'user/findAllAdminUsers',
@@ -151,6 +164,17 @@ export const userSlice = createSlice({
     reducers: {},
     extraReducers(builder) {
         builder
+            .addCase(getCurrentUser.fulfilled, (state, action) => {
+                state.currentUser = action.payload;
+                state.isLoading = false;
+            })
+            .addCase(getCurrentUser.pending, (state) => {
+                state.isLoading = true;
+            })
+            .addCase(getCurrentUser.rejected, (state) => {
+                state.currentUser = undefined;
+                state.isLoading = false;
+            })
             .addCase(findAllAdminUsers.fulfilled, (state, action) => {
                 state.users = action.payload;
                 state.isLoading = false;
