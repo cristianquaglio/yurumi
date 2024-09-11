@@ -3,15 +3,6 @@ import axios from 'axios';
 import { api } from '../../api';
 import { IUser } from '../../utils';
 
-const getCurrentUser = async () => {
-    try {
-        const { data } = await api.get(`/users/current`);
-        return data;
-    } catch (error) {
-        return;
-    }
-};
-
 const findAllAdminUsers = async () => {
     try {
         const { data } = await api.get(`/users/admin`);
@@ -96,7 +87,6 @@ const checkAdmin = async (dependence: string) => {
 };
 
 const UserService = {
-    getCurrentUser,
     findAllAdminUsers,
     findOneAdminUser,
     updateAdminUser,

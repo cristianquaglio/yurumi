@@ -28,6 +28,33 @@ import { LoginDto, RecoverAccountDto } from './dto';
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
+  @UseGuards(JwtAuthGuard)
+  @Get('current')
+  @ApiOperation({ summary: 'Get the current user' })
+  @ApiResponse({
+    status: 200,
+    description: 'OK',
+    example: {
+      firstName: 'Cristian',
+      lastName: 'Quagliozzi',
+      email: 'cristianquaglio@gmail.com',
+      dependence: '66d1d6d78cfc99e93c2f5f84',
+      roles: ['SA'],
+    },
+  })
+  @ApiResponse({
+    status: 401,
+    description: 'Unauthorized',
+    example: {
+      statusCode: 401,
+      message: 'Unauthorized',
+    },
+  })
+  getUser(@CurrentUSer() user: UserDocument) {
+    const { firstName, lastName, email, dependence, roles } = user;
+    return { firstName, lastName, email, dependence, roles };
+  }
+
   @Post('signup')
   @ApiOperation({ summary: 'Create a new user' })
   @ApiResponse({

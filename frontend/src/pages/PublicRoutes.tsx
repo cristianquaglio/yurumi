@@ -1,22 +1,10 @@
-import React, { useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { Navigate, Outlet } from 'react-router-dom';
-import { CircularProgress } from '@mui/material';
 
-import { AppDispatch, RootState } from '../store/store';
-import { getCurrentUser } from '../redux/slices/userSlice';
+import { RootState } from '../store/store';
 
-export const PublicRoutes: React.FC = () => {
-    const dispatch = useDispatch<AppDispatch>();
-    const { currentUser, isLoading } = useSelector(
-        (state: RootState) => state.user,
-    );
+export const PublicRoutes = () => {
+    const { isAuthenticated } = useSelector((state: RootState) => state.auth);
 
-    useEffect(() => {
-        dispatch(getCurrentUser());
-    }, [dispatch]);
-
-    if (isLoading) return <CircularProgress />;
-
-    return currentUser ? <Navigate replace to='/' /> : <Outlet />;
+    return isAuthenticated ? <Navigate to='/' /> : <Outlet />;
 };
