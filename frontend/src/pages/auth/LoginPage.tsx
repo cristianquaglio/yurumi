@@ -1,6 +1,4 @@
-import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import {
     Box,
@@ -26,21 +24,15 @@ type formData = {
 
 export const LoginPage = () => {
     const dispatch = useDispatch<AppDispatch>();
-    const { isLoading, hasError, isLogged } = useSelector(
+    const { isLoading, hasError } = useSelector(
         (state: RootState) => state.auth,
     );
-
-    const navigate = useNavigate();
 
     const {
         register,
         handleSubmit,
         formState: { errors },
     } = useForm<formData>();
-
-    useEffect(() => {
-        if (isLogged) navigate('/');
-    }, [isLogged]);
 
     const onLoginUser = ({ email, password }: formData) => {
         dispatch(login({ email, password }));

@@ -4,8 +4,13 @@ import Cookies from 'js-cookie';
 import AuthService from '../services/authServices';
 import { IUser } from '../../utils';
 
+const checkUserCookie = (): boolean => {
+    return !!Cookies.get('user');
+};
+
 interface authState {
-    isLogged: boolean;
+    isAuthenticated: boolean;
+    currentUser: IUser | undefined;
     isRegistered: boolean;
     isLoading: boolean;
     hasError: boolean;
@@ -15,7 +20,8 @@ interface authState {
 }
 
 const initialState: authState = {
-    isLogged: false,
+    isAuthenticated: checkUserCookie(),
+    currentUser: undefined,
     hasError: false,
     isEmailActivated: false,
     isLoading: false,
@@ -23,6 +29,17 @@ const initialState: authState = {
     isRegistered: false,
     isPasswordChanged: false,
 };
+
+export const getCurrentUser = createAsyncThunk(
+    'auth/getCurrentUser',
+    async () => {
+        try {
+            return await AuthService.getCurrentUser();
+        } catch (error) {
+            return undefined;
+        }
+    },
+);
 
 export const signup = createAsyncThunk(
     'auth/signup',
@@ -49,8 +66,15 @@ export const login = createAsyncThunk(
     ) => {
         try {
             const { statusCode } = await AuthService.login(email, password);
-            if (statusCode === 200) return;
-            throw new Error();
+            if (statusCode === 200) {
+                const user = await AuthService.getCurrentUser();
+                if (user) {
+                    Cookies.set('user', JSON.stringify(user));
+                }
+                return user;
+            } else {
+                throw new Error();
+            }
         } catch (error: any) {
             const message =
                 (error.response &&
@@ -125,18 +149,36 @@ export const authSlice = createSlice({
     reducers: {},
     extraReducers: (builder) => {
         builder
-            .addCase(login.fulfilled, (state) => {
-                state.isLogged = true;
+            .addCase(getCurrentUser.fulfilled, (state, action) => {
+                state.currentUser = action.payload;
+                state.isLoading = false;
+                state.hasError = false;
+            })
+            .addCase(getCurrentUser.pending, (state) => {
+                state.currentUser = undefined;
+                state.isLoading = true;
+                state.hasError = false;
+            })
+            .addCase(getCurrentUser.rejected, (state) => {
+                state.currentUser = undefined;
+                state.isLoading = false;
+                state.hasError = true;
+            })
+            .addCase(login.fulfilled, (state, action) => {
+                state.isAuthenticated = true;
+                state.currentUser = action.payload;
                 state.hasError = false;
                 state.isLoading = false;
             })
             .addCase(login.pending, (state) => {
-                state.isLogged = false;
+                state.isAuthenticated = false;
+                state.currentUser = undefined;
                 state.hasError = false;
                 state.isLoading = true;
             })
             .addCase(login.rejected, (state) => {
-                state.isLogged = false;
+                state.isAuthenticated = false;
+                state.currentUser = undefined;
                 state.hasError = true;
                 state.isLoading = false;
             })

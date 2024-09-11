@@ -3,15 +3,15 @@ import { Provider } from 'react-redux';
 import { RouterProvider } from 'react-router-dom';
 import { CssBaseline, ThemeProvider } from '@mui/material';
 
-import router from './router';
-import theme from './themes/dark-theme';
 import { store } from './store/store';
+import { router } from './router';
+import theme from './themes/dark-theme';
 
 createRoot(document.getElementById('root')!).render(
     <Provider store={store}>
         <ThemeProvider theme={theme}>
             <CssBaseline />
-            <RouterProvider router={router}></RouterProvider>
+            <RouterProvider router={router} />;
         </ThemeProvider>
     </Provider>,
 );

@@ -3,6 +3,15 @@ import axios from 'axios';
 import { api } from '../../api';
 import { IUser } from '../../utils';
 
+const getCurrentUser = async () => {
+    try {
+        const { data } = await api.get(`/auth/current`);
+        return data;
+    } catch (error) {
+        return;
+    }
+};
+
 const signup = async (user: IUser) => {
     try {
         const { data } = await api.post(
@@ -53,6 +62,7 @@ const logout = async () => {
 };
 
 const AuthService = {
+    getCurrentUser,
     signup,
     login,
     emailActivation,

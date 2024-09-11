@@ -11,13 +11,7 @@ import {
   Query,
 } from '@nestjs/common';
 
-import {
-  CurrentUSer,
-  JwtAuthGuard,
-  Roles,
-  UserDocument,
-  UserRoles,
-} from '@app/common';
+import { JwtAuthGuard, Roles, UserRoles } from '@app/common';
 import { UsersService } from './users.service';
 import { UpdateUserDto } from './dto';
 import { ICreateUserPayload } from './interfaces';
@@ -25,12 +19,6 @@ import { ICreateUserPayload } from './interfaces';
 @Controller('users')
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
-
-  @UseGuards(JwtAuthGuard)
-  @Get('current')
-  getUser(@CurrentUSer() user: UserDocument) {
-    return user;
-  }
 
   @Get('check-admin')
   checkAdmin(@Query() createUserPayload: ICreateUserPayload) {
