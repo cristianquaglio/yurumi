@@ -58,7 +58,11 @@ const changePassword = async (password: string) => {
 };
 
 const logout = async () => {
-    return await api.get(`/auth/logout`);
+    try {
+        return await api.get(`/auth/logout`);
+    } catch (error) {
+        throw new Error();
+    }
 };
 
 const AuthService = {

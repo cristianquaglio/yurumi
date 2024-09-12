@@ -134,10 +134,8 @@ export const changePassword = createAsyncThunk(
 
 export const logout = createAsyncThunk('auth/logout', async () => {
     try {
-        await AuthService.logout();
-        Cookies.remove('user');
-        Cookies.remove('token');
-        Cookies.remove('refresh-token');
+        const { data } = await AuthService.logout();
+        if (data === 'OK') Cookies.remove('user');
     } catch (error) {
         return error;
     }
@@ -183,8 +181,7 @@ export const authSlice = createSlice({
                 state.isLoading = false;
             })
             .addCase(logout.fulfilled, (state) => {
-                state.hasError = false;
-                state.isLoading = false;
+                state.isAuthenticated = false;
             })
             .addCase(recoverAccount.fulfilled, (state) => {
                 state.isRecovered = true;

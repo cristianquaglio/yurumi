@@ -267,11 +267,13 @@ export class AuthController {
     description: 'User logged out',
     example: {
       statusCode: 200,
-      message: 'User logged out',
+      message: 'OK',
     },
   })
-  logout(@Req() req: Request) {
-    return this.authService.logout(req.user['_id']);
+  logout(@Res() res: Response) {
+    res.clearCookie('Authentication', { httpOnly: true, path: '/' });
+    res.clearCookie('RefreshToken', { httpOnly: true, path: '/' });
+    return res.sendStatus(200);
   }
 
   @UseGuards(JwtAuthGuard)

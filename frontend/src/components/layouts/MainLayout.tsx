@@ -1,5 +1,6 @@
 import React, { FC, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
 import {
     Box,
     Container,
@@ -16,12 +17,16 @@ import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import { AccountCircle } from '@mui/icons-material';
 
 import { AppBar, Drawer, MainList, SecondaryList } from '../ui';
+import { AppDispatch } from '../../store/store';
+import { logout } from '../../redux/slices/authSlice';
 
 interface Props {
     children: React.ReactNode;
 }
 
 export const MainLayout: FC<Props> = ({ children }) => {
+    const dispatch = useDispatch<AppDispatch>();
+
     const navigate = useNavigate();
 
     const [open, setOpen] = useState(false);
@@ -41,7 +46,7 @@ export const MainLayout: FC<Props> = ({ children }) => {
         navigate('/change-password');
     };
     const handleCloseSession = () => {
-        handleClose();
+        dispatch(logout());
     };
 
     return (
