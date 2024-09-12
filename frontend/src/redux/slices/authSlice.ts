@@ -8,6 +8,12 @@ const checkUserCookie = (): boolean => {
     return !!Cookies.get('user');
 };
 
+const getUserFromCookie = (): IUser | undefined => {
+    return !!Cookies.get('user')
+        ? JSON.parse(Cookies.get('user') as string)
+        : undefined;
+};
+
 interface authState {
     isAuthenticated: boolean;
     currentUser: IUser | undefined;
@@ -21,7 +27,7 @@ interface authState {
 
 const initialState: authState = {
     isAuthenticated: checkUserCookie(),
-    currentUser: undefined,
+    currentUser: getUserFromCookie(),
     hasError: false,
     isEmailActivated: false,
     isLoading: false,

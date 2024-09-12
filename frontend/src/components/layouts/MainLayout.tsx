@@ -1,6 +1,6 @@
 import React, { FC, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import {
     Box,
     Container,
@@ -17,7 +17,7 @@ import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import { AccountCircle } from '@mui/icons-material';
 
 import { AppBar, Drawer, MainList, SecondaryList } from '../ui';
-import { AppDispatch } from '../../store/store';
+import { AppDispatch, RootState } from '../../store/store';
 import { logout } from '../../redux/slices/authSlice';
 
 interface Props {
@@ -26,6 +26,7 @@ interface Props {
 
 export const MainLayout: FC<Props> = ({ children }) => {
     const dispatch = useDispatch<AppDispatch>();
+    const { currentUser } = useSelector((state: RootState) => state.auth);
 
     const navigate = useNavigate();
 
@@ -103,6 +104,10 @@ export const MainLayout: FC<Props> = ({ children }) => {
                             'aria-labelledby': 'basic-button',
                         }}
                     >
+                        <MenuItem>
+                            {`${currentUser?.firstName} ${currentUser?.lastName}`}
+                        </MenuItem>
+                        <Divider />
                         <MenuItem onClick={handleChangePassword}>
                             Cambiar mi clave
                         </MenuItem>
