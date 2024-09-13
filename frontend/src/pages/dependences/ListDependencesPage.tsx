@@ -32,12 +32,7 @@ const Search = styled('div')(({ theme }) => ({
     '&:hover': {
         backgroundColor: alpha(theme.palette.common.white, 0.25),
     },
-    marginLeft: 0,
     width: '100%',
-    [theme.breakpoints.up('sm')]: {
-        marginLeft: theme.spacing(1),
-        width: 'auto',
-    },
 }));
 
 const SearchIconWrapper = styled('div')(({ theme }) => ({
@@ -55,15 +50,9 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
     width: '100%',
     '& .MuiInputBase-input': {
         padding: theme.spacing(1, 1, 1, 0),
-        // vertical padding + font size from searchIcon
         paddingLeft: `calc(1em + ${theme.spacing(4)})`,
         transition: theme.transitions.create('width'),
-        [theme.breakpoints.up('sm')]: {
-            width: '12ch',
-            '&:focus': {
-                width: '20ch',
-            },
-        },
+        width: '100%',
     },
 }));
 
@@ -74,9 +63,7 @@ export const ListDependencesPage = () => {
     );
 
     const [rows, setRows] = useState<IDependence[]>([]);
-
     const [isOpenDeleteDialog, setIsOpenDialog] = useState(false);
-
     const [selectedId, setSelectedId] = useState('');
 
     const handleOpenDeleteDialog = (dependenceId: string) => {
@@ -163,7 +150,7 @@ export const ListDependencesPage = () => {
 
     return (
         <MainLayout>
-            <Grid>
+            <Grid container direction='column'>
                 <Typography
                     variant='h6'
                     noWrap
@@ -172,53 +159,66 @@ export const ListDependencesPage = () => {
                 >
                     Dependencias
                 </Typography>
-                <Grid display={'flex'} sx={{ mb: '.5rem' }}>
-                    <Search sx={{ flexGrow: 1, marginRight: '.5rem' }}>
-                        <SearchIconWrapper>
-                            <SearchIcon />
-                        </SearchIconWrapper>
-                        <StyledInputBase
-                            placeholder='Buscar...'
-                            inputProps={{ 'aria-label': 'search' }}
-                        />
-                    </Search>
-                    <Button
-                        href={`/dependences/create`}
-                        startIcon={<AddOutlinedIcon />}
-                        variant='outlined'
-                        color='success'
-                    >
-                        Agregar
-                    </Button>
+
+                <Grid
+                    container
+                    sx={{ mb: '.5rem', alignItems: 'center' }}
+                    spacing={2}
+                    style={{ width: '100%' }}
+                >
+                    <Grid item xs={9}>
+                        <Search sx={{ marginRight: '.5rem', width: '100%' }}>
+                            <SearchIconWrapper>
+                                <SearchIcon />
+                            </SearchIconWrapper>
+                            <StyledInputBase
+                                placeholder='Buscar...'
+                                inputProps={{ 'aria-label': 'search' }}
+                            />
+                        </Search>
+                    </Grid>
+
+                    <Grid item xs={3}>
+                        <Button
+                            href={`/dependences/create`}
+                            startIcon={<AddOutlinedIcon />}
+                            variant='outlined'
+                            color='success'
+                            style={{ width: '100%' }}
+                        >
+                            Agregar
+                        </Button>
+                    </Grid>
                 </Grid>
-            </Grid>
-            {isLoading ? (
-                <CircularProgress />
-            ) : (
-                <Grid style={{ height: 400, width: '100%' }}>
-                    <DataGrid
-                        rows={rows}
-                        columns={columns}
-                        initialState={{
-                            columns: {
-                                columnVisibilityModel: {
-                                    _id: false,
+
+                {isLoading ? (
+                    <CircularProgress />
+                ) : (
+                    <Grid style={{ height: 400, width: '100%' }}>
+                        <DataGrid
+                            rows={rows}
+                            columns={columns}
+                            initialState={{
+                                columns: {
+                                    columnVisibilityModel: {
+                                        _id: false,
+                                    },
                                 },
-                            },
-                            pagination: {
-                                paginationModel: { page: 0, pageSize: 10 },
-                            },
-                        }}
-                        pageSizeOptions={[5, 10]}
-                        getRowId={(row) => row._id}
-                    />
-                    <DeleteDialog
-                        open={isOpenDeleteDialog}
-                        handleClose={handleCloseDeleteDialog}
-                        handleConfirm={handleConfirmDelete}
-                    />
-                </Grid>
-            )}
+                                pagination: {
+                                    paginationModel: { page: 0, pageSize: 10 },
+                                },
+                            }}
+                            pageSizeOptions={[5, 10]}
+                            getRowId={(row) => row._id}
+                        />
+                        <DeleteDialog
+                            open={isOpenDeleteDialog}
+                            handleClose={handleCloseDeleteDialog}
+                            handleConfirm={handleConfirmDelete}
+                        />
+                    </Grid>
+                )}
+            </Grid>
         </MainLayout>
     );
 };
