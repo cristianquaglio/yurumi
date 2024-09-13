@@ -1,9 +1,0 @@
-- en back
-    terminar doc
-    armar testings unitarios + integracion
-- en front
-    dependencias OK
-    auth:
-        signup OK
-        email-activation OK
-        login OK

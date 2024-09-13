@@ -1,0 +1,17 @@
+- en back
+    armar testings unitarios + integracion
+- en front
+    dependencias OK
+    auth:
+        current OK
+        signup OK
+        email-activation OK
+        login OK
+        refresh OK
+        logout OK
+
+        falta:
+            change-password
+            recover-account
+    falta:
+        users
