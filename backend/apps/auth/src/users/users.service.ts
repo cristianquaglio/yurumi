@@ -11,6 +11,7 @@ import {
   UpdateUserDto,
   GetUserDto,
   ChangePasswordDto,
+  UpdateCurrentDto,
 } from './dto';
 import { UsersRepository } from './users.repository';
 import { ICreateUserPayload } from './interfaces';
@@ -141,10 +142,10 @@ export class UsersService {
     }
   }
 
-  async updateCurrentUser(_id: string, updateUserDto: UpdateUserDto) {
+  async updateCurrentUser(_id: string, updateCurrentDto: UpdateCurrentDto) {
     return await this.usersRepository.findOneAndUpdate(
       { _id },
-      { $set: updateUserDto },
+      { $set: updateCurrentDto },
     );
   }
 
