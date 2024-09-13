@@ -1,39 +1,28 @@
-import {
-  IsBoolean,
-  IsEnum,
-  IsOptional,
-  IsString,
-  IsStrongPassword,
-} from 'class-validator';
+import { ArrayMinSize, IsArray, IsEnum, IsOptional } from 'class-validator';
+import { ApiProperty } from '@nestjs/swagger';
 
-import { UserStatus } from '@app/common';
+import { RestrictedRoles, UserStatus } from '@app/common';
 
 export class UpdateUserDto {
   @IsOptional()
-  @IsString()
-  firstName?: string;
-
-  @IsOptional()
-  @IsString()
-  lastName?: string;
-
-  @IsOptional()
-  @IsString()
-  username?: string;
-
-  @IsOptional()
-  @IsStrongPassword()
-  password?: string;
-
-  @IsOptional()
-  @IsBoolean()
-  isPasswordChanged?: boolean;
-
-  @IsOptional()
-  @IsString()
-  refreshToken?: string;
+  @IsArray()
+  @IsEnum(RestrictedRoles, { each: true })
+  @ArrayMinSize(1)
+  @ApiProperty({
+    required: false,
+    isArray: true,
+    enum: RestrictedRoles,
+    enumName: 'RestrictedRoles',
+    example: ['ADMINISTRATIVE', 'PROFESSIONAL'],
+  })
+  roles?: RestrictedRoles[];
 
   @IsOptional()
   @IsEnum(UserStatus)
+  @ApiProperty({
+    required: false,
+    enum: UserStatus,
+    example: 'INACTIVE',
+  })
   status?: UserStatus;
 }

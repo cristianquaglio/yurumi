@@ -10,7 +10,13 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { MessagePattern, Payload } from '@nestjs/microservices';
-import { ApiOperation, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
+import {
+  ApiCookieAuth,
+  ApiOperation,
+  ApiQuery,
+  ApiResponse,
+  ApiTags,
+} from '@nestjs/swagger';
 
 import { CurrentUSer, UserDocument } from '@app/common';
 import { AuthService } from './auth.service';
@@ -30,6 +36,7 @@ export class AuthController {
 
   @UseGuards(JwtAuthGuard)
   @Get('current')
+  @ApiCookieAuth()
   @ApiOperation({ summary: 'Get the current user' })
   @ApiResponse({
     status: 200,
@@ -120,7 +127,7 @@ export class AuthController {
 
   @UseGuards(LocalAuthGuard)
   @Post('login')
-  @ApiOperation({ summary: 'User logged in' })
+  @ApiOperation({ summary: "Initiate user's session" })
   @ApiResponse({
     status: 200,
     description: 'User logged in',
@@ -156,6 +163,7 @@ export class AuthController {
 
   @UseGuards(JwtAuthGuard)
   @Post('change-password')
+  @ApiCookieAuth()
   @ApiOperation({ summary: "Change user's password" })
   @ApiResponse({
     status: 200,
@@ -196,6 +204,7 @@ export class AuthController {
 
   @UseGuards(RefreshTokenGuard)
   @Get('refresh')
+  @ApiCookieAuth()
   @ApiOperation({ summary: "Refresh user's token" })
   @ApiResponse({
     status: 204,
@@ -260,8 +269,9 @@ export class AuthController {
   }
 
   @UseGuards(JwtAuthGuard)
+  @ApiCookieAuth()
   @Get('logout')
-  @ApiOperation({ summary: "logout user's session" })
+  @ApiOperation({ summary: "Logout user's session" })
   @ApiResponse({
     status: 200,
     description: 'User logged out',

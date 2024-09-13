@@ -83,11 +83,31 @@ export class UsersService {
   }
 
   async findAll(dependence: string) {
-    return await this.usersRepository.find({ dependence });
+    const users = await this.usersRepository.find({ dependence });
+    return users.map((user) => {
+      return {
+        _id: user._id,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        username: user?.username,
+        email: user.email,
+        roles: user.roles,
+        status: user.status,
+      };
+    });
   }
 
   async findOne(_id: string, dependence: string) {
-    return await this.usersRepository.findOne({ _id, dependence });
+    const user = await this.usersRepository.findOne({ _id, dependence });
+    return {
+      _id: user._id,
+      firstName: user.firstName,
+      lastName: user.lastName,
+      username: user?.username,
+      email: user.email,
+      roles: user.roles,
+      status: user.status,
+    };
   }
 
   async dependenceHasUsers({ dependence }: ICreateUserPayload) {
@@ -100,10 +120,25 @@ export class UsersService {
   }
 
   async update(_id: string, updateUserDto: UpdateUserDto, dependence: string) {
-    return await this.usersRepository.findOneAndUpdate(
-      { _id, dependence },
-      { $set: updateUserDto },
-    );
+    try {
+      const user = await this.usersRepository.findOneAndUpdate(
+        { _id, dependence },
+        { $set: updateUserDto },
+      );
+      return {
+        _id: user._id,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        username: user?.username,
+        email: user.email,
+        roles: user.roles,
+        status: user.status,
+        isPasswordChanged: user.isPasswordChanged,
+      };
+    } catch (error) {
+      console.log(error);
+      throw new BadRequestException(`Something happens`);
+    }
   }
 
   async updateCurrentUser(_id: string, updateUserDto: UpdateUserDto) {
