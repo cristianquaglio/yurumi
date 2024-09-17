@@ -16,6 +16,21 @@ services:
     restart: always
     depends_on:
       - db
+  patients:
+    build:
+      context: .
+      dockerfile: ./apps/patients/Dockerfile
+      target: development
+    command: yarn run start:dev patients
+    env_file:
+      - ./apps/patients/.env
+    ports:
+      - '7004:7004'
+    volumes:
+      - .:/usr/src/app
+    restart: always
+    depends_on:
+      - db
   notifications:
     build:
       context: .
