@@ -1,5 +1,6 @@
 - en back
     armar testings unitarios + integracion
+    docs en ms patients
 - en front
     dependencias OK
     auth:
@@ -15,17 +16,4 @@
             recover-account
     falta:
         users
-=================================================================================
-COMO 
-    usuario ADMINISTRATIVE
-QUIERO
-    cargar pacientes al sistema
-PARA
-    que los mismos puedan ser atendidos
-
-COMO
-    usuario ADMINISTRATIVE
-QUIERO
-    buscar pacientes en el MS patients
-PARA
-    que los mismos puedan ser atendidos
+        carga y lista de pacientes
