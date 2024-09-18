@@ -2,7 +2,7 @@ import { Controller, Get, Post, Body, Param } from '@nestjs/common';
 import { Types } from 'mongoose';
 
 import { PatientsService } from './patients.service';
-import { CreatePatientDto } from './dto/create-patient.dto';
+import { CreatePatientDto } from './dto';
 
 @Controller('patients')
 export class PatientsController {

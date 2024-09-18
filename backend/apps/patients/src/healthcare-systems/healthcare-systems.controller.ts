@@ -1,11 +1,22 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+} from '@nestjs/common';
+import { Types } from 'mongoose';
+
 import { HealthcareSystemsService } from './healthcare-systems.service';
-import { CreateHealthcareSystemDto } from './dto/create-healthcare-system.dto';
-import { UpdateHealthcareSystemDto } from './dto/update-healthcare-system.dto';
+import { CreateHealthcareSystemDto, UpdateHealthcareSystemDto } from './dto';
 
 @Controller('healthcare-systems')
 export class HealthcareSystemsController {
-  constructor(private readonly healthcareSystemsService: HealthcareSystemsService) {}
+  constructor(
+    private readonly healthcareSystemsService: HealthcareSystemsService,
+  ) {}
 
   @Post()
   create(@Body() createHealthcareSystemDto: CreateHealthcareSystemDto) {
@@ -18,12 +29,15 @@ export class HealthcareSystemsController {
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.healthcareSystemsService.findOne(+id);
+  findOne(@Param('id') id: Types.ObjectId) {
+    return this.healthcareSystemsService.findOne(id);
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateHealthcareSystemDto: UpdateHealthcareSystemDto) {
+  update(
+    @Param('id') id: string,
+    @Body() updateHealthcareSystemDto: UpdateHealthcareSystemDto,
+  ) {
     return this.healthcareSystemsService.update(+id, updateHealthcareSystemDto);
   }
 

@@ -5,9 +5,9 @@ import * as Joi from 'joi';
 import { DatabaseModule, LoggerModule } from '@app/common';
 import { PatientsService } from './patients.service';
 import { PatientsController } from './patients.controller';
-import { HealthcareSystemsModule } from './healthcare-systems/healthcare-systems.module';
 import { PatientRepository } from './patients.repository';
-import { PatientDocument, PatientSchema } from './models/patient.schema';
+import { PatientDocument, PatientSchema } from './models';
+import { HealthcareSystemsModule } from './healthcare-systems';
 
 @Module({
   imports: [

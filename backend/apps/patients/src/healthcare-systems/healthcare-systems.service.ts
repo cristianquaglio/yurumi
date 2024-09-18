@@ -1,19 +1,27 @@
 import { Injectable } from '@nestjs/common';
-import { CreateHealthcareSystemDto } from './dto/create-healthcare-system.dto';
-import { UpdateHealthcareSystemDto } from './dto/update-healthcare-system.dto';
+import { Types } from 'mongoose';
+
+import { CreateHealthcareSystemDto, UpdateHealthcareSystemDto } from './dto';
+import { HealthcareSystemsRepository } from './healthcare-systems.repository';
 
 @Injectable()
 export class HealthcareSystemsService {
-  create(createHealthcareSystemDto: CreateHealthcareSystemDto) {
-    return 'This action adds a new healthcareSystem';
+  constructor(
+    private readonly healthcareSystemsRepository: HealthcareSystemsRepository,
+  ) {}
+
+  async create(createHealthcareSystemDto: CreateHealthcareSystemDto) {
+    return await this.healthcareSystemsRepository.create(
+      createHealthcareSystemDto,
+    );
   }
 
-  findAll() {
-    return `This action returns all healthcareSystems`;
+  async findAll() {
+    return await this.healthcareSystemsRepository.find({});
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} healthcareSystem`;
+  async findOne(_id: Types.ObjectId) {
+    return await this.healthcareSystemsRepository.findOne({ _id });
   }
 
   update(id: number, updateHealthcareSystemDto: UpdateHealthcareSystemDto) {

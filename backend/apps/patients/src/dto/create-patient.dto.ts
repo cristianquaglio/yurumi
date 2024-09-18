@@ -2,6 +2,7 @@ import {
   IsDate,
   IsEmail,
   IsEnum,
+  IsMongoId,
   IsNotEmpty,
   IsObject,
   IsOptional,
@@ -11,6 +12,7 @@ import {
 import { Type } from 'class-transformer';
 
 import { BloodType, DocumentType, GenderType, Nationality } from '../constants';
+import { HealthcareSystemDocument } from '../healthcare-systems';
 
 class ContactData {
   @IsOptional()
@@ -75,9 +77,9 @@ export class CreatePatientDto {
   @IsNotEmpty()
   documentNumber: string;
 
-  @IsString()
+  @IsMongoId()
   @IsNotEmpty()
-  healthcareSystem: string;
+  healthcareSystem: HealthcareSystemDocument;
 
   @IsString()
   @IsNotEmpty()

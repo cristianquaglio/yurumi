@@ -21,10 +21,14 @@ export abstract class AbstractRepository<TDocument extends AbstractDocument> {
     }
   }
 
-  async findOne(filterQuery: FilterQuery<TDocument>): Promise<TDocument> {
+  async findOne(
+    filterQuery: FilterQuery<TDocument>,
+    populateField: any = undefined,
+  ): Promise<TDocument> {
     try {
       const document = await this.model
         .findOne(filterQuery)
+        .populate(populateField)
         .lean<TDocument>(true);
       if (!document) {
         this.logger.warn(
@@ -56,8 +60,14 @@ export abstract class AbstractRepository<TDocument extends AbstractDocument> {
     return document;
   }
 
-  async find(filterQuery: FilterQuery<TDocument>): Promise<TDocument[]> {
-    return this.model.find(filterQuery).lean<TDocument[]>(true);
+  async find(
+    filterQuery: FilterQuery<TDocument>,
+    populateField: any = undefined,
+  ): Promise<TDocument[]> {
+    return this.model
+      .find(filterQuery)
+      .populate(populateField)
+      .lean<TDocument[]>(true);
   }
 
   async findOneAndDelete(

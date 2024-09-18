@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { Types } from 'mongoose';
 
-import { CreatePatientDto } from './dto/create-patient.dto';
 import { PatientRepository } from './patients.repository';
+import { CreatePatientDto } from './dto';
 
 @Injectable()
 export class PatientsService {
@@ -14,10 +14,10 @@ export class PatientsService {
   }
 
   async findAll() {
-    return await this.patientRepository.find({});
+    return await this.patientRepository.find({}, 'healthcareSystem');
   }
 
   async findOne(_id: Types.ObjectId) {
-    return await this.patientRepository.findOne({ _id });
+    return await this.patientRepository.findOne({ _id }, 'healthcareSystem');
   }
 }

@@ -1,6 +1,8 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
+import { Schema as MongooseSchema } from 'mongoose';
 
 import { AbstractDocument } from '@app/common';
+import { HealthcareSystemDocument } from '../healthcare-systems';
 
 class ContactData {
   @Prop()
@@ -54,8 +56,12 @@ export class PatientDocument extends AbstractDocument {
   @Prop()
   documentNumber: string;
 
-  @Prop()
-  healthcareSystem: string; // TODO
+  @Prop({
+    type: MongooseSchema.Types.ObjectId,
+    ref: 'HealthcareSystemDocument',
+    required: true,
+  })
+  healthcareSystem: HealthcareSystemDocument;
 
   @Prop()
   healthcareNumber: string;
