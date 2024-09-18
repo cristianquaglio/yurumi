@@ -1,8 +1,15 @@
+import { APP_GUARD } from '@nestjs/core';
 import { Module } from '@nestjs/common';
-import { ConfigModule } from '@nestjs/config';
+import { ConfigModule, ConfigService } from '@nestjs/config';
+import { ClientsModule, Transport } from '@nestjs/microservices';
 import * as Joi from 'joi';
 
-import { DatabaseModule, LoggerModule } from '@app/common';
+import {
+  AUTH_SERVICE,
+  DatabaseModule,
+  JwtAuthGuard,
+  LoggerModule,
+} from '@app/common';
 import { PatientsService } from './patients.service';
 import { PatientsController } from './patients.controller';
 import { PatientRepository } from './patients.repository';
@@ -24,11 +31,34 @@ import { HealthcareSystemsModule } from './healthcare-systems';
       isGlobal: true,
       validationSchema: Joi.object({
         HTTP_PORT: Joi.number().required(),
+        MONGODB_URI: Joi.string().required(),
+        AUTH_HOST: Joi.string().required(),
+        AUTH_PORT: Joi.string().required(),
       }),
       envFilePath: './apps/patients/.env',
     }),
+    ClientsModule.registerAsync([
+      {
+        name: AUTH_SERVICE,
+        useFactory: (configService: ConfigService) => ({
+          transport: Transport.TCP,
+          options: {
+            host: configService.get('AUTH_HOST'),
+            port: configService.get('AUTH_PORT'),
+          },
+        }),
+        inject: [ConfigService],
+      },
+    ]),
   ],
   controllers: [PatientsController],
-  providers: [PatientsService, PatientRepository],
+  providers: [
+    PatientsService,
+    PatientRepository,
+    {
+      provide: APP_GUARD,
+      useClass: JwtAuthGuard,
+    },
+  ],
 })
 export class PatientsModule {}

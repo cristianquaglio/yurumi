@@ -1,8 +1,9 @@
 import { NestFactory } from '@nestjs/core';
 import { ValidationPipe } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { Logger } from 'nestjs-pino';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import { Logger } from 'nestjs-pino';
+import * as cookieParser from 'cookie-parser';
 
 import { PatientsModule } from './patients.module';
 
@@ -26,10 +27,13 @@ async function main() {
 
   app.useLogger(app.get(Logger));
 
+  app.use(cookieParser());
+
   app.enableCors({
     origin: configService.get('FRONTEND_URI'),
     credentials: true,
   });
+
   await app.listen(configService.get('HTTP_PORT'));
 }
 main();

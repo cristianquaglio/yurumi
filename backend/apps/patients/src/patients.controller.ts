@@ -1,6 +1,7 @@
-import { Controller, Get, Post, Body, Param } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, UseGuards } from '@nestjs/common';
 import { Types } from 'mongoose';
 
+import { JwtAuthGuard, Roles, UserRoles } from '@app/common';
 import { PatientsService } from './patients.service';
 import { CreatePatientDto } from './dto';
 
@@ -8,16 +9,22 @@ import { CreatePatientDto } from './dto';
 export class PatientsController {
   constructor(private readonly patientsService: PatientsService) {}
 
+  @UseGuards(JwtAuthGuard)
+  @Roles(UserRoles.ADMINISTRATIVE)
   @Post()
   create(@Body() createPatientDto: CreatePatientDto) {
     return this.patientsService.create(createPatientDto);
   }
 
+  @UseGuards(JwtAuthGuard)
+  @Roles(UserRoles.ADMINISTRATIVE)
   @Get()
   findAll() {
     return this.patientsService.findAll();
   }
 
+  @UseGuards(JwtAuthGuard)
+  @Roles(UserRoles.ADMINISTRATIVE)
   @Get(':id')
   findOne(@Param('id') id: Types.ObjectId) {
     return this.patientsService.findOne(id);
