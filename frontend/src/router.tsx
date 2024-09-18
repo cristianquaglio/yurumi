@@ -15,6 +15,10 @@ import {
     PrivateRoutes,
     DependencesRoute,
 } from './pages';
+import {
+    CreateHealthcarePage,
+    HealthcareRoute,
+} from './pages/healthcare-systems';
 
 export const router = createBrowserRouter([
     {
@@ -47,6 +51,21 @@ export const router = createBrowserRouter([
                         element: <UpdateDependencePage />,
                     },
                     { path: '', element: <ListDependencesPage /> },
+                ],
+            },
+            {
+                path: 'healthcare',
+                element: <HealthcareRoute />,
+                children: [
+                    {
+                        path: 'create',
+                        element: <CreateHealthcarePage />,
+                    },
+                    // {
+                    //     path: ':dependenceId',
+                    //     element: <DependencePage />,
+                    // },
+                    // { path: '', element: <ListDependencesPage /> },
                 ],
             },
             { path: '/', element: <HomePage /> },
