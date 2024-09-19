@@ -39,3 +39,12 @@ export const listDocumentTypes = () => {
         { id: 'FOREIGN_ID', value: 'ID extranjero' },
     ];
 };
+
+export const listHealthcareSystems = () => {
+    return [
+        // { id: 'IPS', value: 'IPS' },
+        // { id: 'OSDE', value: 'OSDE' },
+        // { id: 'PAMI', value: 'PAMI' },
+        // { id: 'OTHER', value: 'Otra' },
+    ];
+}

@@ -1,14 +1,21 @@
+import { useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
 import {
     Box,
     Button,
     CircularProgress,
+    Dialog,
+    DialogActions,
+    DialogContent,
     Grid,
+    IconButton,
+    InputAdornment,
     MenuItem,
     TextField,
     Typography,
 } from '@mui/material';
+import { Add as AddIcon } from '@mui/icons-material';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
@@ -20,9 +27,11 @@ import {
     listBloodTypes,
     listDocumentTypes,
     listGenders,
+    listHealthcareSystems,
     listNationalities,
 } from '../../utils';
 import { isValidEmail } from '../../utils/validators';
+import { CreateHealthcareForm } from '../healthcare-systems';
 
 type formData = {
     firstName: string;
@@ -50,10 +59,19 @@ export const CreatePatientPage = () => {
     const {
         register,
         handleSubmit,
-        setValue,
         formState: { errors },
         control,
     } = useForm<formData>();
+
+    const [openDialog, setOpenDialog] = useState(false);
+
+    const handleOpenDialog = () => {
+        setOpenDialog(true);
+    };
+
+    const handleCloseDialog = () => {
+        setOpenDialog(false);
+    };
 
     const onCreatePatient = (data: formData) => {
         console.log(data);
@@ -206,10 +224,28 @@ export const CreatePatientPage = () => {
                             </Grid>
                         </Grid>
 
-                        {/* Fecha de Nacimiento y Hora de Nacimiento */}
+                        {/* Número de documento, Fecha de Nacimiento y Hora de Nacimiento */}
                         <Grid item xs={12}>
                             <Grid container spacing={2}>
-                                <Grid item xs={12} sm={6}>
+                                <Grid item xs={12} sm={4} md={4}>
+                                    <TextField
+                                        label='Número de documento'
+                                        variant='filled'
+                                        fullWidth
+                                        {...register('documentNumber', {
+                                            required: 'Este campo es requerido',
+                                            minLength: {
+                                                value: 2,
+                                                message: 'Mínimo 2 caracteres',
+                                            },
+                                        })}
+                                        error={!!errors.documentNumber}
+                                        helperText={
+                                            errors.documentNumber?.message
+                                        }
+                                    />
+                                </Grid>
+                                <Grid item xs={12} sm={4} md={4}>
                                     <LocalizationProvider
                                         dateAdapter={AdapterDayjs}
                                     >
@@ -258,7 +294,7 @@ export const CreatePatientPage = () => {
                                         />
                                     </LocalizationProvider>
                                 </Grid>
-                                <Grid item xs={12} sm={6}>
+                                <Grid item xs={12} sm={4} md={4}>
                                     <TextField
                                         label='Hora nacimiento'
                                         variant='filled'
@@ -271,27 +307,60 @@ export const CreatePatientPage = () => {
                             </Grid>
                         </Grid>
 
-                        {/* Número de documento, Número de OS y Email */}
                         <Grid item xs={12}>
                             <Grid container spacing={2}>
-                                <Grid item xs={12} sm={6} md={4}>
+                                {/* Obra Social */}
+                                <Grid item xs={12} sm={6} md={8}>
                                     <TextField
-                                        label='Número de documento'
+                                        select
+                                        label='Obra Social'
                                         variant='filled'
                                         fullWidth
-                                        {...register('documentNumber', {
+                                        {...register('healthcareSystem', {
                                             required: 'Este campo es requerido',
-                                            minLength: {
-                                                value: 2,
-                                                message: 'Mínimo 2 caracteres',
-                                            },
                                         })}
-                                        error={!!errors.documentNumber}
+                                        error={!!errors.healthcareSystem}
                                         helperText={
-                                            errors.documentNumber?.message
+                                            errors.healthcareSystem?.message
                                         }
-                                    />
+                                        InputProps={{
+                                            endAdornment: (
+                                                <InputAdornment position='end'>
+                                                    <IconButton
+                                                        color='primary'
+                                                        onClick={
+                                                            handleOpenDialog
+                                                        }
+                                                        edge='end'
+                                                    >
+                                                        <AddIcon />
+                                                    </IconButton>
+                                                </InputAdornment>
+                                            ),
+                                        }}
+                                        SelectProps={{
+                                            IconComponent: () => null, // Esto oculta la flecha del select
+                                        }}
+                                    >
+                                        {listHealthcareSystems().length > 0 ? (
+                                            listHealthcareSystems().map(
+                                                ({ id, value }) => (
+                                                    <MenuItem
+                                                        key={id}
+                                                        value={id}
+                                                    >
+                                                        {value}
+                                                    </MenuItem>
+                                                ),
+                                            )
+                                        ) : (
+                                            <MenuItem value=''>
+                                                No hay datos disponibles
+                                            </MenuItem>
+                                        )}
+                                    </TextField>
                                 </Grid>
+
                                 <Grid item xs={12} sm={6} md={4}>
                                     <TextField
                                         label='Número de OS'
@@ -310,7 +379,13 @@ export const CreatePatientPage = () => {
                                         }
                                     />
                                 </Grid>
-                                <Grid item xs={12} sm={6} md={4}>
+                            </Grid>
+                        </Grid>
+
+                        {/* Correo, Teléfono y Dirección */}
+                        <Grid item xs={12}>
+                            <Grid container spacing={2}>
+                                <Grid item xs={12} sm={4} md={4}>
                                     <TextField
                                         label='Correo electrónico'
                                         type='email'
@@ -329,13 +404,7 @@ export const CreatePatientPage = () => {
                                         helperText={errors.email?.message}
                                     />
                                 </Grid>
-                            </Grid>
-                        </Grid>
-
-                        {/* Teléfono y Dirección */}
-                        <Grid item xs={12}>
-                            <Grid container spacing={2}>
-                                <Grid item xs={12} sm={6}>
+                                <Grid item xs={12} sm={4} md={4}>
                                     <TextField
                                         label='Teléfono'
                                         variant='filled'
@@ -345,7 +414,7 @@ export const CreatePatientPage = () => {
                                         helperText={errors.phoneNumber?.message}
                                     />
                                 </Grid>
-                                <Grid item xs={12} sm={6}>
+                                <Grid item xs={12} sm={4} md={4}>
                                     <TextField
                                         label='Dirección'
                                         variant='filled'
@@ -424,6 +493,26 @@ export const CreatePatientPage = () => {
                     </Grid>
                 </Box>
             </form>
+            {/* Diálogo para crear OS */}
+            <Dialog
+                open={openDialog}
+                onClose={handleCloseDialog}
+                maxWidth='sm'
+                fullWidth={false}
+                PaperProps={{ style: { maxHeight: '90vh' } }}
+            >
+                <DialogContent>
+                    <CreateHealthcareForm
+                        onClose={handleCloseDialog}
+                        mode='dialog'
+                    />
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={handleCloseDialog} color='primary'>
+                        Cancelar
+                    </Button>
+                </DialogActions>
+            </Dialog>
         </MainLayout>
     );
 };
