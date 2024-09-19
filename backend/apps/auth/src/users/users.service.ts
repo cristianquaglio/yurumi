@@ -137,7 +137,6 @@ export class UsersService {
         isPasswordChanged: user.isPasswordChanged,
       };
     } catch (error) {
-      console.log(error);
       throw new BadRequestException(`Something happens`);
     }
   }

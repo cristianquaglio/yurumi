@@ -3,12 +3,14 @@ import { configureStore } from '@reduxjs/toolkit';
 import { authSlice } from '../redux/slices/authSlice';
 import { dependenceSlice } from '../redux/slices/dependenceSlice';
 import { userSlice } from '../redux/slices/userSlice';
+import { healthcareSlice } from '../redux/slices/healthcareSlice';
 
 export const store = configureStore({
     reducer: {
         auth: authSlice.reducer,
         dependence: dependenceSlice.reducer,
         user: userSlice.reducer,
+        healthcare: healthcareSlice.reducer,
     },
 });
 

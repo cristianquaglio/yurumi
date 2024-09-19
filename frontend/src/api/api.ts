@@ -2,38 +2,48 @@ import axios, { InternalAxiosRequestConfig } from 'axios';
 
 import { IApiResponse } from '../utils';
 
-export const api = axios.create({
-    baseURL: import.meta.env.VITE_BACKEND_API_URI,
-    withCredentials: true, // let to use cookies
+// Create axios instances for different microservices
+export const authApi = axios.create({
+    baseURL: import.meta.env.VITE_BACKEND_AUTH_URI,
+    withCredentials: true, // for authentication
+});
+
+export const patientsApi = axios.create({
+    baseURL: import.meta.env.VITE_BACKEND_PATIENTS_URI,
+    withCredentials: true,
 });
 
 // Add a request interceptor
-api.interceptors.request.use(
-    (config: InternalAxiosRequestConfig<any>) => {
-        // you can add settings here
-        return config;
-    },
-    (error) => Promise.reject(error),
-);
+const addInterceptors = (apiInstance: any) => {
+    apiInstance.interceptors.request.use(
+        (config: InternalAxiosRequestConfig<any>) => {
+            // You can add global settings here (e.g., auth headers)
+            return config;
+        },
+        (error: any) => Promise.reject(error),
+    );
 
-// Add a response interceptor
-api.interceptors.response.use(
-    (response) => response,
-    async (error) => {
-        const originalRequest = error.config;
-
-        if (error.response.status === 403 && !originalRequest._retry) {
-            originalRequest._retry = true;
-            try {
-                const { data } = await api.get<IApiResponse>(
-                    `${import.meta.env.VITE_BACKEND_API_URI}/auth/refresh`,
-                );
-                if (data.statusCode === 200) return api(originalRequest);
-            } catch (error) {
-                return error;
+    apiInstance.interceptors.response.use(
+        (response: any) => response,
+        async (error: { config: any; response: { status: number } }) => {
+            const originalRequest = error.config;
+            if (error.response?.status === 403 && !originalRequest._retry) {
+                originalRequest._retry = true;
+                try {
+                    const { data } = await authApi.get<IApiResponse>(
+                        `${import.meta.env.VITE_BACKEND_AUTH_URI}/auth/refresh`,
+                    );
+                    if (data.statusCode === 200)
+                        return apiInstance(originalRequest);
+                } catch (error) {
+                    return Promise.reject(error);
+                }
             }
-        }
+            return Promise.reject(error);
+        },
+    );
+};
 
-        return Promise.reject(error);
-    },
-);
+// Add interceptors to each API instance
+addInterceptors(authApi);
+addInterceptors(patientsApi);

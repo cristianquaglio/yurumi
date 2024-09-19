@@ -7,7 +7,6 @@ import {
     Chip,
     CircularProgress,
     Grid,
-    MenuItem,
     TextField,
     Typography,
 } from '@mui/material';
@@ -16,14 +15,9 @@ import { ErrorOutline } from '@mui/icons-material';
 import { MainLayout } from '../../components/layouts';
 import { useDispatch, useSelector } from 'react-redux';
 import { AppDispatch, RootState } from '../../store/store';
-import { createDependence } from '../../redux/slices/dependenceSlice';
-import {
-    listDependenceTypes,
-    listTributaryTypes,
-    validators,
-} from '../../utils';
 import { BackButton, PhoneField } from '../../components/ui';
-import { isEmail, isValidEmail } from '../../utils/validators';
+import { isValidEmail } from '../../utils/validators';
+import { createHealthcareSystem } from '../../redux/slices/healthcareSlice';
 
 type formData = {
     code: string;
@@ -40,7 +34,7 @@ export const CreateHealthcarePage = () => {
 
     const dispatch = useDispatch<AppDispatch>();
     const { isLoading, hasError, isCreated, error } = useSelector(
-        (state: RootState) => state.dependence,
+        (state: RootState) => state.healthcare,
     );
 
     const {
@@ -51,11 +45,10 @@ export const CreateHealthcarePage = () => {
     } = useForm<formData>();
 
     useEffect(() => {
-        if (isCreated) navigate('/healthcare');
+        if (isCreated) navigate('/');
     }, [isCreated]);
 
     const onCreateHealthcare = (data: formData) => {
-        // dispatch(createHealthcare(data));
         const healthcareSystem = {
             code: data.code,
             fullName: data.fullName,
@@ -67,7 +60,7 @@ export const CreateHealthcarePage = () => {
                 web: data?.web || undefined,
             },
         };
-        console.log(healthcareSystem);
+        dispatch(createHealthcareSystem(healthcareSystem));
     };
 
     return (
@@ -191,10 +184,7 @@ export const CreateHealthcarePage = () => {
                         </Grid>
                         <Grid item xs={12}>
                             <Box display='flex' justifyContent='space-around'>
-                                <BackButton
-                                    link='dependences'
-                                    disabled={isLoading}
-                                />
+                                <BackButton link='' disabled={isLoading} />
                                 <Button
                                     type='submit'
                                     variant='outlined'

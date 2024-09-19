@@ -1,11 +1,11 @@
 import axios from 'axios';
 
-import { api } from '../../api';
+import { authApi } from '../../api';
 import { IUser } from '../../utils';
 
 const getCurrentUser = async () => {
     try {
-        const { data } = await api.get(`/auth/current`);
+        const { data } = await authApi.get(`/auth/current`);
         return data;
     } catch (error) {
         return;
@@ -14,7 +14,7 @@ const getCurrentUser = async () => {
 
 const signup = async (user: IUser) => {
     try {
-        const { data } = await api.post(
+        const { data } = await authApi.post(
             `/auth/signup?dependence=${user.dependence}`,
             user,
         );
@@ -26,7 +26,7 @@ const signup = async (user: IUser) => {
 
 const login = async (email: string, password: string) => {
     try {
-        const { data } = await api.post(`/auth/login`, {
+        const { data } = await authApi.post(`/auth/login`, {
             email,
             password,
         });
@@ -39,18 +39,20 @@ const login = async (email: string, password: string) => {
 };
 
 const emailActivation = async (token: string) => {
-    return await api.get(`/auth/email-activation?token=${token}`);
+    return await authApi.get(`/auth/email-activation?token=${token}`);
 };
 
 const recoverAccount = async (email: string) => {
-    await api.post(`/auth/recover`, {
+    await authApi.post(`/auth/recover`, {
         email,
     });
 };
 
 const changePassword = async (password: string) => {
     try {
-        const { data } = await api.post(`/auth/change-password`, { password });
+        const { data } = await authApi.post(`/auth/change-password`, {
+            password,
+        });
         return data;
     } catch (error: any) {
         if (axios.isAxiosError(error)) throw new Error(`Bad Request error`);
@@ -59,7 +61,7 @@ const changePassword = async (password: string) => {
 
 const logout = async () => {
     try {
-        return await api.get(`/auth/logout`);
+        return await authApi.get(`/auth/logout`);
     } catch (error) {
         throw new Error();
     }
