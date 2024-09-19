@@ -14,11 +14,13 @@ import {
     PublicRoutes,
     PrivateRoutes,
     DependencesRoute,
-} from './pages';
-import {
-    CreateHealthcarePage,
     HealthcareRoute,
-} from './pages/healthcare-systems';
+    CreateHealthcarePage,
+    PatientsRoute,
+    CreatePatientPage,
+    PatientPage,
+    ListPatientsPage,
+} from './pages';
 
 export const router = createBrowserRouter([
     {
@@ -61,11 +63,25 @@ export const router = createBrowserRouter([
                         path: 'create',
                         element: <CreateHealthcarePage />,
                     },
-                    // {
-                    //     path: ':dependenceId',
-                    //     element: <DependencePage />,
-                    // },
-                    // { path: '', element: <ListDependencesPage /> },
+                    // TODO: other healthcare pages
+                ],
+            },
+            {
+                path: 'patients',
+                element: <PatientsRoute />,
+                children: [
+                    {
+                        path: 'create',
+                        element: <CreatePatientPage />,
+                    },
+                    {
+                        path: ':patientId',
+                        element: <PatientPage />,
+                    },
+                    {
+                        path: '',
+                        element: <ListPatientsPage />,
+                    },
                 ],
             },
             { path: '/', element: <HomePage /> },

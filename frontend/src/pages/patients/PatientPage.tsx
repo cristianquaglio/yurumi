@@ -1,0 +1,1 @@
+export const PatientPage = () => <>PatientPage</>;

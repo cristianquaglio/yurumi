@@ -3,3 +3,5 @@ export * from './PrivateRoutes';
 export * from './PublicRoutes';
 export * from './auth';
 export * from './dependences';
+export * from './healthcare-systems';
+export * from './patients';
