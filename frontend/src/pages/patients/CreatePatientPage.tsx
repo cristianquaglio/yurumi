@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
 import {
@@ -27,18 +27,20 @@ import {
     listBloodTypes,
     listDocumentTypes,
     listGenders,
-    listHealthcareSystems,
     listNationalities,
 } from '../../utils';
 import { isValidEmail } from '../../utils/validators';
 import { CreateHealthcareForm } from '../healthcare-systems';
+import { useDispatch, useSelector } from 'react-redux';
+import { AppDispatch, RootState } from '../../store/store';
+import { findAllHealthcares } from '../../redux/slices/healthcareSlice';
 
 type formData = {
     firstName: string;
     lastName: string;
     gender: string;
     bloodType: string;
-    birthDay: string; // String para almacenar en y-m-d
+    birthDay: string; // String for y-m-d
     birthTime: string;
     nationality: string;
     documentType: string;
@@ -55,22 +57,56 @@ type formData = {
 };
 
 export const CreatePatientPage = () => {
-    const navigate = useNavigate();
+    const dispatch = useDispatch<AppDispatch>();
+    const { healthcares } = useSelector((state: RootState) => state.healthcare);
+
+    // const navigate = useNavigate();
+    const [openDialog, setOpenDialog] = useState(false);
+    const [newHealthcare, setNewHealthcare] = useState<string | undefined>(
+        undefined,
+    );
+
     const {
         register,
         handleSubmit,
         formState: { errors },
         control,
+        setValue,
+        watch,
     } = useForm<formData>();
 
-    const [openDialog, setOpenDialog] = useState(false);
+    const selectHealthcareValue = watch('healthcareSystem') || ''; // initial empty value
+
+    useEffect(() => {
+        dispatch(findAllHealthcares());
+    }, [dispatch]);
+
+    // effect to verify and set the value in form
+    useEffect(() => {
+        if (newHealthcare) {
+            const healthcareExists = healthcares.some(
+                (item) => item._id === newHealthcare,
+            );
+            if (healthcareExists) {
+                setValue('healthcareSystem', newHealthcare); // Stablish only if exists
+            } else {
+                console.warn(
+                    `El nuevo valor ${newHealthcare} no está en la lista de healthcares.`,
+                );
+            }
+            setNewHealthcare(undefined); // reset after verification
+        }
+    }, [newHealthcare, healthcares, dispatch, setValue]);
 
     const handleOpenDialog = () => {
         setOpenDialog(true);
     };
 
-    const handleCloseDialog = () => {
+    const handleCloseDialog = (newValue?: string) => {
         setOpenDialog(false);
+        dispatch(findAllHealthcares()).then(() => {
+            setNewHealthcare(newValue);
+        });
     };
 
     const onCreatePatient = (data: formData) => {
@@ -276,9 +312,9 @@ export const CreatePatientPage = () => {
                                                                 : null;
                                                         field.onChange(
                                                             formattedDate,
-                                                        ); // Guardar como y-m-d
+                                                        ); // save as y-m-d
                                                     }}
-                                                    format='DD-MM-YYYY' // Mostrar como d-m-y
+                                                    format='DD-MM-YYYY' // show as d-m-y
                                                     slotProps={{
                                                         textField: {
                                                             variant: 'filled',
@@ -316,6 +352,15 @@ export const CreatePatientPage = () => {
                                         label='Obra Social'
                                         variant='filled'
                                         fullWidth
+                                        value={
+                                            healthcares.some(
+                                                (item) =>
+                                                    item._id ===
+                                                    selectHealthcareValue,
+                                            )
+                                                ? selectHealthcareValue
+                                                : ''
+                                        }
                                         {...register('healthcareSystem', {
                                             required: 'Este campo es requerido',
                                         })}
@@ -339,24 +384,19 @@ export const CreatePatientPage = () => {
                                             ),
                                         }}
                                         SelectProps={{
-                                            IconComponent: () => null, // Esto oculta la flecha del select
+                                            IconComponent: () => null, // Oculta la flecha del select
                                         }}
+                                        defaultValue='' // Valor por defecto vacío
                                     >
-                                        {listHealthcareSystems().length > 0 ? (
-                                            listHealthcareSystems().map(
-                                                ({ id, value }) => (
-                                                    <MenuItem
-                                                        key={id}
-                                                        value={id}
-                                                    >
-                                                        {value}
-                                                    </MenuItem>
-                                                ),
-                                            )
-                                        ) : (
-                                            <MenuItem value=''>
-                                                No hay datos disponibles
-                                            </MenuItem>
+                                        <MenuItem value=''>
+                                            <em>--Seleccione--</em>
+                                        </MenuItem>
+                                        {healthcares.map(
+                                            ({ _id, shortName }: any) => (
+                                                <MenuItem key={_id} value={_id}>
+                                                    {shortName}
+                                                </MenuItem>
+                                            ),
                                         )}
                                     </TextField>
                                 </Grid>
@@ -496,7 +536,7 @@ export const CreatePatientPage = () => {
             {/* Diálogo para crear OS */}
             <Dialog
                 open={openDialog}
-                onClose={handleCloseDialog}
+                onClose={() => handleCloseDialog()}
                 maxWidth='sm'
                 fullWidth={false}
                 PaperProps={{ style: { maxHeight: '90vh' } }}
@@ -508,7 +548,7 @@ export const CreatePatientPage = () => {
                     />
                 </DialogContent>
                 <DialogActions>
-                    <Button onClick={handleCloseDialog} color='primary'>
+                    <Button onClick={() => handleCloseDialog()} color='primary'>
                         Cancelar
                     </Button>
                 </DialogActions>

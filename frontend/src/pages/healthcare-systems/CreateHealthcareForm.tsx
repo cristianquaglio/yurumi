@@ -1,4 +1,4 @@
-import { FC, useEffect } from 'react';
+import { FC } from 'react';
 import { useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
 import {
@@ -29,13 +29,13 @@ type formData = {
 };
 
 interface Props {
-    onClose: () => void;
+    onClose: (newValue?: string) => void;
     mode: 'dialog' | 'page';
 }
 
 export const CreateHealthcareForm: FC<Props> = ({ onClose, mode }) => {
     const dispatch = useDispatch<AppDispatch>();
-    const { isLoading, hasError, isCreated, error } = useSelector(
+    const { isLoading, hasError, error } = useSelector(
         (state: RootState) => state.healthcare,
     );
 
@@ -48,11 +48,7 @@ export const CreateHealthcareForm: FC<Props> = ({ onClose, mode }) => {
         formState: { errors },
     } = useForm<formData>();
 
-    useEffect(() => {
-        if (isCreated) mode === 'dialog' ? onClose() : navigate('healthcare');
-    }, [isCreated]);
-
-    const onCreateHealthcare = (data: formData) => {
+    const onCreateHealthcare = async (data: formData) => {
         const healthcareSystem = {
             code: data.code,
             fullName: data.fullName,
@@ -64,7 +60,21 @@ export const CreateHealthcareForm: FC<Props> = ({ onClose, mode }) => {
                 web: data?.web || undefined,
             },
         };
-        dispatch(createHealthcareSystem(healthcareSystem));
+
+        // Dispatch para crear la Obra Social
+        const resultAction = await dispatch(
+            createHealthcareSystem(healthcareSystem),
+        );
+
+        // Si la creación fue exitosa, cierra el diálogo o redirige
+        if (createHealthcareSystem.fulfilled.match(resultAction)) {
+            const createdId = resultAction.payload?._id; // Asumiendo que el _id es parte del payload
+            if (mode === 'dialog') {
+                onClose(createdId); // Pasa el _id al cerrar el diálogo
+            } else {
+                navigate('/healthcare'); // Redirige si está en modo "page"
+            }
+        }
     };
 
     return (

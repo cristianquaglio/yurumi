@@ -6,6 +6,7 @@ interface IContactData {
 }
 
 export interface IHealthcareSystems {
+    _id?: string;
     code: string;
     fullName: string;
     shortName: string;

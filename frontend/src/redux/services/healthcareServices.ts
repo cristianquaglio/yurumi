@@ -15,6 +15,30 @@ const createHealthcare = async (healthcareSystem: IHealthcareSystems) => {
     }
 };
 
-const HealthcareSystemsService = { createHealthcare };
+const findAllHealthcare = async () => {
+    try {
+        const { data } = await patientsApi.get(`/healthcare-systems`);
+        return data;
+    } catch (error) {
+        return;
+    }
+};
+
+const findHealthcare = async (healthcareId: string) => {
+    try {
+        const { data } = await patientsApi.get(
+            `/healthcare-systems/${healthcareId}`,
+        );
+        return data;
+    } catch (error) {
+        return;
+    }
+};
+
+const HealthcareSystemsService = {
+    createHealthcare,
+    findAllHealthcare,
+    findHealthcare,
+};
 
 export default HealthcareSystemsService;
