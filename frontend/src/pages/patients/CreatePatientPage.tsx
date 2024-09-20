@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import {
     Box,
     Button,
+    Chip,
     CircularProgress,
     Dialog,
     DialogActions,
@@ -15,7 +16,7 @@ import {
     TextField,
     Typography,
 } from '@mui/material';
-import { Add as AddIcon } from '@mui/icons-material';
+import { Add as AddIcon, ErrorOutline } from '@mui/icons-material';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
@@ -34,6 +35,7 @@ import { CreateHealthcareForm } from '../healthcare-systems';
 import { useDispatch, useSelector } from 'react-redux';
 import { AppDispatch, RootState } from '../../store/store';
 import { findAllHealthcares } from '../../redux/slices/healthcareSlice';
+import { createPatient } from '../../redux/slices/patientSlice';
 
 type formData = {
     firstName: string;
@@ -59,8 +61,11 @@ type formData = {
 export const CreatePatientPage = () => {
     const dispatch = useDispatch<AppDispatch>();
     const { healthcares } = useSelector((state: RootState) => state.healthcare);
+    const { isLoading, hasError, error, isCreated } = useSelector(
+        (state: RootState) => state.patient,
+    );
 
-    // const navigate = useNavigate();
+    const navigate = useNavigate();
     const [openDialog, setOpenDialog] = useState(false);
     const [newHealthcare, setNewHealthcare] = useState<string | undefined>(
         undefined,
@@ -98,6 +103,10 @@ export const CreatePatientPage = () => {
         }
     }, [newHealthcare, healthcares, dispatch, setValue]);
 
+    useEffect(() => {
+        if (isCreated) navigate('/patients');
+    }, [isCreated]);
+
     const handleOpenDialog = () => {
         setOpenDialog(true);
     };
@@ -110,7 +119,29 @@ export const CreatePatientPage = () => {
     };
 
     const onCreatePatient = (data: formData) => {
-        console.log(data);
+        const newPatient = {
+            firstName: data.firstName,
+            lastName: data.lastName,
+            gender: data.gender,
+            bloodType: data.bloodType,
+            nationality: data.nationality,
+            documentType: data.documentType,
+            documentNumber: data.documentNumber,
+            birthDay: data.birthDay,
+            birthTime: data?.birthTime,
+            healthcareSystem: data.healthcareSystem,
+            healthcareNumber: data.healthcareNumber,
+            contactData: {
+                email: data?.email || undefined,
+                phoneNumber: data?.phoneNumber || undefined,
+                address: data?.address || undefined,
+                country: data?.country || undefined,
+                state: data?.state || undefined,
+                city: data?.city || undefined,
+                zipCode: data?.zipCode || undefined,
+            },
+        };
+        dispatch(createPatient(newPatient));
     };
 
     return (
@@ -126,6 +157,17 @@ export const CreatePatientPage = () => {
                             >
                                 Cargar paciente
                             </Typography>
+                            <Chip
+                                label={`${
+                                    error === 'Bad Request error'
+                                        ? 'Registro existente'
+                                        : 'Error creando el registro'
+                                }`}
+                                color='error'
+                                icon={<ErrorOutline />}
+                                className='fadeIn'
+                                sx={{ display: hasError ? 'flex' : 'none' }}
+                            />
                         </Grid>
 
                         {/* Grupo Nombre y Apellido */}
@@ -515,14 +557,14 @@ export const CreatePatientPage = () => {
 
                         <Grid item xs={12}>
                             <Box display='flex' justifyContent='space-around'>
-                                <BackButton link='' disabled={false} />
+                                <BackButton link='' disabled={isLoading} />
                                 <Button
                                     type='submit'
                                     variant='outlined'
                                     color='success'
-                                    disabled={false}
+                                    disabled={isLoading}
                                 >
-                                    {false ? (
+                                    {isLoading ? (
                                         <CircularProgress />
                                     ) : (
                                         'Cargar paciente'
