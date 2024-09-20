@@ -27,7 +27,11 @@ const addInterceptors = (apiInstance: any) => {
         (response: any) => response,
         async (error: { config: any; response: { status: number } }) => {
             const originalRequest = error.config;
-            if (error.response?.status === 403 && !originalRequest._retry) {
+            if (
+                (error.response?.status === 401 ||
+                    error.response?.status === 403) &&
+                !originalRequest._retry
+            ) {
                 originalRequest._retry = true;
                 try {
                     const { data } = await authApi.get<IApiResponse>(

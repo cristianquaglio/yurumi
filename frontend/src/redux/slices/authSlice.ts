@@ -138,12 +138,21 @@ export const changePassword = createAsyncThunk(
     },
 );
 
-export const logout = createAsyncThunk('auth/logout', async () => {
+export const logout = createAsyncThunk('auth/logout', async (_, thunkAPI) => {
     try {
         const { data } = await AuthService.logout();
-        if (data === 'OK') Cookies.remove('user');
-    } catch (error) {
-        return error;
+        if (data === 'OK') {
+            Cookies.remove('user');
+        }
+        return data;
+    } catch (error: any) {
+        const message =
+            (error.response &&
+                error.response.data &&
+                error.response.data.message) ||
+            error.message ||
+            error.toString();
+        return thunkAPI.rejectWithValue(message);
     }
 });
 
