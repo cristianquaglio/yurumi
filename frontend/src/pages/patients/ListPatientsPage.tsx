@@ -64,32 +64,23 @@ export const ListPatientsPage = () => {
     useEffect(() => {
         const handler = setTimeout(() => {
             setDebouncedSearch(search); // Update debounced value after 500ms
-        }, 500);
+        }, 900);
 
         return () => {
             clearTimeout(handler); // Cleanup on unmount or search change
         };
     }, [search]);
 
+    // Dispatch the search term to find patients with the current search value
     useEffect(() => {
-        dispatch(findAllPatients());
-    }, [dispatch]);
+        dispatch(findAllPatients(debouncedSearch));
+    }, [debouncedSearch, dispatch]);
 
     useEffect(() => {
         if (patients) {
-            const filteredPatients = patients.filter(
-                (patient) =>
-                    patient.firstName
-                        .toLowerCase()
-                        .includes(debouncedSearch.toLowerCase()) ||
-                    patient.lastName
-                        .toLowerCase()
-                        .includes(debouncedSearch.toLowerCase()) ||
-                    patient.documentNumber.includes(debouncedSearch),
-            );
-            setRows(filteredPatients);
+            setRows(patients);
         }
-    }, [patients, debouncedSearch]);
+    }, [patients]);
 
     const columns: GridColDef[] = [
         { field: '_id', headerName: 'ID', flex: 1 },
