@@ -58,17 +58,41 @@ export const ListPatientsPage = () => {
     );
 
     const [rows, setRows] = useState<IPatient[]>([]);
+    const [search, setSearch] = useState(''); // Search input value
+    const [debouncedSearch, setDebouncedSearch] = useState(search); // Debounced search value
+
+    useEffect(() => {
+        const handler = setTimeout(() => {
+            setDebouncedSearch(search); // Update debounced value after 500ms
+        }, 500);
+
+        return () => {
+            clearTimeout(handler); // Cleanup on unmount or search change
+        };
+    }, [search]);
 
     useEffect(() => {
         dispatch(findAllPatients());
-    }, []);
+    }, [dispatch]);
 
     useEffect(() => {
-        if (patients) setRows(patients);
-    }, [patients]);
+        if (patients) {
+            const filteredPatients = patients.filter(
+                (patient) =>
+                    patient.firstName
+                        .toLowerCase()
+                        .includes(debouncedSearch.toLowerCase()) ||
+                    patient.lastName
+                        .toLowerCase()
+                        .includes(debouncedSearch.toLowerCase()) ||
+                    patient.documentNumber.includes(debouncedSearch),
+            );
+            setRows(filteredPatients);
+        }
+    }, [patients, debouncedSearch]);
 
     const columns: GridColDef[] = [
-        { field: '_id', headerName: 'ID', flex: 1 }, // Responsive column width
+        { field: '_id', headerName: 'ID', flex: 1 },
         { field: 'firstName', headerName: 'Nombre', flex: 1 },
         { field: 'lastName', headerName: 'Apellido', flex: 1 },
         {
@@ -90,7 +114,7 @@ export const ListPatientsPage = () => {
             field: 'detail',
             headerName: '',
             sortable: false,
-            flex: 0.5, // Makes this column take less space
+            flex: 0.5,
             renderCell: ({ row }: Partial<GridRowParams>) => (
                 <Grid
                     container
@@ -102,7 +126,7 @@ export const ListPatientsPage = () => {
                         href={`/patients/${row._id}`}
                         startIcon={<VisibilityOutlinedIcon />}
                         sx={{
-                            minWidth: 'auto', // Adjust width based on content
+                            minWidth: 'auto',
                         }}
                     />
                 </Grid>
@@ -117,7 +141,7 @@ export const ListPatientsPage = () => {
                     variant='h6'
                     noWrap
                     component='div'
-                    sx={{ flexGrow: 1, display: { sm: 'block' } }}
+                    sx={{ flexGrow: 1 }}
                 >
                     Pacientes
                 </Typography>
@@ -126,9 +150,7 @@ export const ListPatientsPage = () => {
                     container
                     sx={{ mb: '.5rem', alignItems: 'center' }}
                     spacing={2}
-                    style={{ width: '100%' }}
                 >
-                    {/* Search input */}
                     <Grid item xs={12} md={9}>
                         <Search sx={{ marginRight: '.5rem', width: '100%' }}>
                             <SearchIconWrapper>
@@ -137,11 +159,12 @@ export const ListPatientsPage = () => {
                             <StyledInputBase
                                 placeholder='Buscar...'
                                 inputProps={{ 'aria-label': 'search' }}
+                                value={search}
+                                onChange={(e) => setSearch(e.target.value)}
                             />
                         </Search>
                     </Grid>
 
-                    {/* Add button */}
                     <Grid item xs={12} md={3}>
                         <Button
                             href={`/patients/create`}
@@ -155,7 +178,6 @@ export const ListPatientsPage = () => {
                     </Grid>
                 </Grid>
 
-                {/* Loading state */}
                 {isLoading ? (
                     <CircularProgress />
                 ) : (
@@ -175,7 +197,7 @@ export const ListPatientsPage = () => {
                             }}
                             pageSizeOptions={[5, 10]}
                             getRowId={(row) => row._id}
-                            autoHeight // Auto height for responsive design
+                            autoHeight
                         />
                     </Grid>
                 )}
