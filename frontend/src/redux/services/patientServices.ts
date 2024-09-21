@@ -12,9 +12,11 @@ const createPatient = async (patient: IPatient) => {
     }
 };
 
-const findAllPatients = async () => {
+const findAllPatients = async (searchTerm?: string) => {
     try {
-        const { data } = await patientsApi.get(`/patients`);
+        const { data } = await patientsApi.get(
+            `/patients${searchTerm ? `?search=${searchTerm}` : ''}`,
+        );
         return data;
     } catch (error) {
         return;

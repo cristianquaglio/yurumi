@@ -34,9 +34,9 @@ export const createPatient = createAsyncThunk(
 
 export const findAllPatients = createAsyncThunk(
     'patient/findAllPatients',
-    async () => {
+    async (searchTerm?: string) => {
         try {
-            return await PatientsService.findAllPatients();
+            return await PatientsService.findAllPatients(searchTerm);
         } catch (error) {
             return [];
         }

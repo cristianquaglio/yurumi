@@ -1,4 +1,12 @@
-import { Controller, Get, Post, Body, Param, UseGuards } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Param,
+  UseGuards,
+  Query,
+} from '@nestjs/common';
 import { Types } from 'mongoose';
 
 import { JwtAuthGuard, Roles, UserRoles } from '@app/common';
@@ -19,8 +27,8 @@ export class PatientsController {
   @UseGuards(JwtAuthGuard)
   @Roles(UserRoles.ADMINISTRATIVE)
   @Get()
-  findAll() {
-    return this.patientsService.findAll();
+  findAll(@Query('search') search: string) {
+    return this.patientsService.findAll(search);
   }
 
   @UseGuards(JwtAuthGuard)

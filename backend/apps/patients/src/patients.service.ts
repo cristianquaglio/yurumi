@@ -13,7 +13,20 @@ export class PatientsService {
     return { patientId: _id };
   }
 
-  async findAll() {
+  async findAll(search?: string) {
+    if (search) {
+      const searchRegex = new RegExp(search, 'i'); // 'i' uppercase and lowercase without differences
+      return this.patientRepository.find(
+        {
+          $or: [
+            { firstName: { $regex: searchRegex } },
+            { lastName: { $regex: searchRegex } },
+            { documentNumber: { $regex: searchRegex } },
+          ],
+        },
+        'healthcareSystem',
+      );
+    }
     return await this.patientRepository.find({}, 'healthcareSystem');
   }
 
