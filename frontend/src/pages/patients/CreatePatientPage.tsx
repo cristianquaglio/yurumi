@@ -557,7 +557,7 @@ export const CreatePatientPage = () => {
 
                         <Grid item xs={12}>
                             <Box display='flex' justifyContent='space-around'>
-                                <BackButton link='' disabled={isLoading} />
+                                <BackButton link='patients' disabled={isLoading} />
                                 <Button
                                     type='submit'
                                     variant='outlined'

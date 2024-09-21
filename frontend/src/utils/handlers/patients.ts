@@ -39,3 +39,16 @@ export const listDocumentTypes = () => {
         { id: 'FOREIGN_ID', value: 'ID extranjero' },
     ];
 };
+
+export const documentTypes = (types: string) => {
+    switch (types) {
+        case 'DNI':
+            return 'DNI';
+        case 'PASSPORT':
+            return 'PASAPORTE';
+        case 'CI':
+            return 'CI';
+        case 'FOREIGN_ID':
+            return 'OTRO';
+    }
+};

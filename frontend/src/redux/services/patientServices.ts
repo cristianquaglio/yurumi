@@ -12,8 +12,28 @@ const createPatient = async (patient: IPatient) => {
     }
 };
 
+const findAllPatients = async () => {
+    try {
+        const { data } = await patientsApi.get(`/patients`);
+        return data;
+    } catch (error) {
+        return;
+    }
+};
+
+const findPatient = async (patientId: string) => {
+    try {
+        const { data } = await patientsApi.get(`/patients/${patientId}`);
+        return data;
+    } catch (error) {
+        return;
+    }
+};
+
 const PatientsService = {
     createPatient,
+    findAllPatients,
+    findPatient,
 };
 
 export default PatientsService;

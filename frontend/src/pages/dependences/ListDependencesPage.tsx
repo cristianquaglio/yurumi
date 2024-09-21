@@ -25,6 +25,7 @@ import {
 import { dependenceStatus, dependenceTypes, IDependence } from '../../utils';
 import { DeleteDialog } from '../../components/ui/DeleteDialog';
 
+// Estilos del componente de búsqueda
 const Search = styled('div')(({ theme }) => ({
     position: 'relative',
     borderRadius: theme.shape.borderRadius,
@@ -94,31 +95,32 @@ export const ListDependencesPage = () => {
     }, [dependences]);
 
     const columns: GridColDef[] = [
-        { field: '_id', headerName: 'ID', width: 70 },
+        { field: '_id', headerName: 'ID', flex: 0.5 }, // Responsive width
         {
             field: 'type',
             headerName: 'Tipo',
-            width: 70,
+            flex: 1,
             renderCell: (params) => dependenceTypes(params.value),
         },
-        { field: 'tributaryType', headerName: '', width: 70 },
-        { field: 'tributaryId', headerName: 'CUIT', width: 130 },
-        { field: 'shortName', headerName: 'Nombre', width: 200 },
+        { field: 'tributaryType', headerName: '', flex: 0.5 },
+        { field: 'tributaryId', headerName: 'CUIT', flex: 1 },
+        { field: 'shortName', headerName: 'Nombre', flex: 1.5 },
         {
             field: 'status',
             headerName: 'Estado',
-            width: 130,
+            flex: 1,
             renderCell: (params) => dependenceStatus(params.value),
         },
         {
             field: 'detail',
             headerName: '',
             sortable: false,
-            width: 60,
+            flex: 0.3,
             renderCell: ({ row }: Partial<GridRowParams>) => (
                 <Button
                     href={`/dependences/${row._id}`}
                     startIcon={<VisibilityOutlinedIcon />}
+                    sx={{ minWidth: 'auto' }}
                 />
             ),
         },
@@ -126,11 +128,12 @@ export const ListDependencesPage = () => {
             field: 'edit',
             headerName: '',
             sortable: false,
-            width: 60,
+            flex: 0.3,
             renderCell: ({ row }: Partial<GridRowParams>) => (
                 <Button
                     href={`/dependences/update/${row._id}`}
                     startIcon={<EditOutlinedIcon />}
+                    sx={{ minWidth: 'auto' }}
                 />
             ),
         },
@@ -138,11 +141,12 @@ export const ListDependencesPage = () => {
             field: 'delete',
             headerName: '',
             sortable: false,
-            width: 60,
+            flex: 0.3,
             renderCell: ({ row }: Partial<GridRowParams>) => (
                 <Button
                     onClick={() => handleOpenDeleteDialog(row._id)}
                     startIcon={<DeleteOutlineOutlinedIcon />}
+                    sx={{ minWidth: 'auto' }}
                 />
             ),
         },
@@ -166,7 +170,8 @@ export const ListDependencesPage = () => {
                     spacing={2}
                     style={{ width: '100%' }}
                 >
-                    <Grid item xs={9}>
+                    {/* Búsqueda */}
+                    <Grid item xs={12} md={9}>
                         <Search sx={{ marginRight: '.5rem', width: '100%' }}>
                             <SearchIconWrapper>
                                 <SearchIcon />
@@ -178,7 +183,8 @@ export const ListDependencesPage = () => {
                         </Search>
                     </Grid>
 
-                    <Grid item xs={3}>
+                    {/* Botón agregar */}
+                    <Grid item xs={12} md={3}>
                         <Button
                             href={`/dependences/create`}
                             startIcon={<AddOutlinedIcon />}
@@ -191,6 +197,7 @@ export const ListDependencesPage = () => {
                     </Grid>
                 </Grid>
 
+                {/* Cargando */}
                 {isLoading ? (
                     <CircularProgress />
                 ) : (
@@ -210,6 +217,7 @@ export const ListDependencesPage = () => {
                             }}
                             pageSizeOptions={[5, 10]}
                             getRowId={(row) => row._id}
+                            autoHeight
                         />
                         <DeleteDialog
                             open={isOpenDeleteDialog}

@@ -32,6 +32,28 @@ export const createPatient = createAsyncThunk(
     },
 );
 
+export const findAllPatients = createAsyncThunk(
+    'patient/findAllPatients',
+    async () => {
+        try {
+            return await PatientsService.findAllPatients();
+        } catch (error) {
+            return [];
+        }
+    },
+);
+
+export const findPatient = createAsyncThunk(
+    'patient/findPatient',
+    async (patientId: string) => {
+        try {
+            return await PatientsService.findPatient(patientId);
+        } catch (error) {
+            return undefined;
+        }
+    },
+);
+
 export const patientSlice = createSlice({
     name: 'patient',
     initialState,
@@ -56,7 +78,23 @@ export const patientSlice = createSlice({
                     state.isCreated = false;
                     state.error = action.payload as string;
                 },
-            );
+            )
+            .addCase(findAllPatients.fulfilled, (state, action) => {
+                state.patients = action.payload;
+                state.isLoading = false;
+            })
+            .addCase(findAllPatients.pending, (state) => {
+                state.patients = [];
+                state.isLoading = true;
+            })
+            .addCase(findPatient.fulfilled, (state, action) => {
+                state.patient = action.payload;
+                state.isLoading = false;
+            })
+            .addCase(findPatient.pending, (state) => {
+                state.patient = undefined;
+                state.isLoading = true;
+            });
     },
 });
 
