@@ -58,22 +58,25 @@ export const ListPatientsPage = () => {
     );
 
     const [rows, setRows] = useState<IPatient[]>([]);
-    const [search, setSearch] = useState(''); // Search input value
-    const [debouncedSearch, setDebouncedSearch] = useState(search); // Debounced search value
+    const [search, setSearch] = useState('');
+    const [debouncedSearch, setDebouncedSearch] = useState(search);
 
     useEffect(() => {
         const handler = setTimeout(() => {
-            setDebouncedSearch(search); // Update debounced value after 500ms
-        }, 900);
+            setDebouncedSearch(search);
+        }, 700);
 
         return () => {
-            clearTimeout(handler); // Cleanup on unmount or search change
+            clearTimeout(handler);
         };
     }, [search]);
 
-    // Dispatch the search term to find patients with the current search value
     useEffect(() => {
-        dispatch(findAllPatients(debouncedSearch));
+        if (debouncedSearch) {
+            dispatch(findAllPatients(debouncedSearch));
+        } else {
+            dispatch(findAllPatients(''));
+        }
     }, [debouncedSearch, dispatch]);
 
     useEffect(() => {
@@ -169,10 +172,25 @@ export const ListPatientsPage = () => {
                     </Grid>
                 </Grid>
 
-                {isLoading ? (
-                    <CircularProgress />
-                ) : (
-                    <Grid style={{ height: '400px', width: '100%' }}>
+                <Grid
+                    style={{
+                        height: '400px',
+                        width: '100%',
+                        position: 'relative',
+                    }}
+                >
+                    {isLoading ? (
+                        <CircularProgress
+                            size={24}
+                            style={{
+                                position: 'absolute',
+                                top: '50%',
+                                left: '50%',
+                                marginTop: -12,
+                                marginLeft: -12,
+                            }}
+                        />
+                    ) : (
                         <DataGrid
                             rows={rows}
                             columns={columns}
@@ -189,9 +207,10 @@ export const ListPatientsPage = () => {
                             pageSizeOptions={[5, 10]}
                             getRowId={(row) => row._id}
                             autoHeight
+                            style={{ transition: 'opacity 0.3s' }} // Smooth transition for DataGrid
                         />
-                    </Grid>
-                )}
+                    )}
+                </Grid>
             </Grid>
         </MainLayout>
     );

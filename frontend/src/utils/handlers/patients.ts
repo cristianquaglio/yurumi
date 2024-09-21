@@ -1,3 +1,12 @@
+export const listDocumentTypes = () => {
+    return [
+        { id: 'DNI', value: 'DNI' },
+        { id: 'PASSPORT', value: 'Pasaporte' },
+        { id: 'CI', value: 'Cédula de Identidad' },
+        { id: 'FOREIGN_ID', value: 'ID extranjero' },
+    ];
+};
+
 export const listGenders = () => {
     return [
         { id: 'MALE', value: 'Masculino' },
@@ -31,15 +40,6 @@ export const listNationalities = () => {
     ];
 };
 
-export const listDocumentTypes = () => {
-    return [
-        { id: 'DNI', value: 'DNI' },
-        { id: 'PASSPORT', value: 'Pasaporte' },
-        { id: 'CI', value: 'Cédula de Identidad' },
-        { id: 'FOREIGN_ID', value: 'ID extranjero' },
-    ];
-};
-
 export const documentTypes = (types: string) => {
     switch (types) {
         case 'DNI':
@@ -50,5 +50,35 @@ export const documentTypes = (types: string) => {
             return 'CI';
         case 'FOREIGN_ID':
             return 'OTRO';
+    }
+};
+
+export const genders = (gender: string) => {
+    switch (gender) {
+        case 'MALE':
+            return 'Masculino';
+        case 'FEMALE':
+            return 'Femenino';
+        case 'OTHER':
+            return 'Otro';
+    }
+};
+
+export const nationalities = (nationality: string) => {
+    switch (nationality) {
+        case 'ARG':
+            return 'ARGENTINA';
+        case 'BRA':
+            return 'BRASILERA';
+        case 'PAR':
+            return 'PARAGUAYA';
+        case 'URU':
+            return 'URUGUAYA';
+        case 'BOL':
+            return 'BOLIVIANA';
+        case 'CHI':
+            return 'CHILENA';
+        case 'OTRA':
+            return 'Otra';
     }
 };

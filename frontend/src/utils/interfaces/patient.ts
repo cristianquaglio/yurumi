@@ -1,3 +1,5 @@
+import { IHealthcareSystems } from './healthcareSystems';
+
 interface IContactData {
     email?: string;
     phoneNumber?: string;
@@ -19,7 +21,7 @@ export interface IPatient {
     documentNumber: string;
     birthDay: string;
     birthTime: string;
-    healthcareSystem: string;
+    healthcareSystem: IHealthcareSystems;
     healthcareNumber: string;
     contactData?: IContactData;
 }
