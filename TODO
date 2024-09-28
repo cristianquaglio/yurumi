@@ -17,3 +17,18 @@
     falta:
         users
         listas de obras sociales
+billings 
+healthcare systems
+nomenclator
+dependences
+services
+patients => affiliates
+prestations
+    convenios
+    condiciones de facturación
+audit
+    documentación necesaria
+    autorizaciones
+    informes medicos 
+    estudios complementarios
+payments

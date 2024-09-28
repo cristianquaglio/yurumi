@@ -23,6 +23,12 @@
       ],
       "@app/common/*": [
         "libs/common/src/*"
+      ],
+      "@app/hms": [
+        "libs/hms/src"
+      ],
+      "@app/hms/*": [
+        "libs/hms/src/*"
       ]
     }
   }

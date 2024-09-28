@@ -43,6 +43,15 @@
       "compilerOptions": {
         "tsConfigPath": "apps/patients/tsconfig.app.json"
       }
+    },
+    "hms": {
+      "type": "library",
+      "root": "libs/hms",
+      "entryFile": "index",
+      "sourceRoot": "libs/hms/src",
+      "compilerOptions": {
+        "tsConfigPath": "libs/hms/tsconfig.lib.json"
+      }
     }
   },
   "monorepo": true,

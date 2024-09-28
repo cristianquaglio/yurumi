@@ -97,7 +97,8 @@
       "<rootDir>/apps/"
     ],
     "moduleNameMapper": {
-      "^@app/common(|/.*)$": "<rootDir>/libs/common/src/$1"
+      "^@app/common(|/.*)$": "<rootDir>/libs/common/src/$1",
+      "^@app/hms(|/.*)$": "<rootDir>/libs/hms/src/$1"
     }
   }
 }
