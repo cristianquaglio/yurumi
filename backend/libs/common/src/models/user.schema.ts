@@ -19,7 +19,7 @@ export class UserDocument extends AbstractDocument {
   @Prop()
   password: string;
 
-  @Prop({ required: true })
+  @Prop()
   dependence: string;
 
   @Prop()

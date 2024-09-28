@@ -22,6 +22,7 @@ import { CurrentUSer, UserDocument } from '@app/common';
 import { AuthService } from './auth.service';
 import {
   ChangePasswordDto,
+  CreateSADto,
   CreateUserDto,
   ICreateUserPayload,
   IEmailActivationPayload,
@@ -33,6 +34,29 @@ import { LoginDto, RecoverAccountDto } from './dto';
 @ApiTags('Auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
+
+  @Post('create-sa')
+  @ApiOperation({ summary: 'Create Super Admin user' })
+  @ApiResponse({
+    status: 201,
+    description: 'SA created',
+    example: {
+      statusCode: 201,
+      message: 'SA created',
+    },
+  })
+  @ApiResponse({
+    status: 400,
+    description: 'Link is not available',
+    example: {
+      statusCode: 400,
+      message: 'Link is not available',
+      error: 'Bad Request',
+    },
+  })
+  createSA(@Body() createSADto: CreateSADto) {
+    return this.authService.createSA(createSADto);
+  }
 
   @UseGuards(JwtAuthGuard)
   @Get('current')

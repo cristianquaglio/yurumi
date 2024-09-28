@@ -12,6 +12,7 @@ import {
   GetUserDto,
   ChangePasswordDto,
   UpdateCurrentDto,
+  CreateSADto,
 } from './dto';
 import { UsersRepository } from './users.repository';
 import { ICreateUserPayload } from './interfaces';
@@ -21,6 +22,22 @@ export class UsersService {
   constructor(private readonly usersRepository: UsersRepository) {}
 
   private SALT: number = 10;
+
+  async isSuperAdminPresent() {
+    const sa = await this.usersRepository.findOne({
+      roles: { $in: ['SA'] },
+    });
+    return !!sa;
+  }
+
+  async createSA(createSADto: CreateSADto) {
+    return await this.usersRepository.create({
+      ...createSADto,
+      dependence: undefined,
+      refreshToken: undefined,
+      isPasswordChanged: false,
+    });
+  }
 
   async create(dependence: string, createUserDto: CreateUserDto) {
     return await this.usersRepository.create({

@@ -20,6 +20,7 @@ import {
 } from '@app/common';
 import {
   ChangePasswordDto,
+  CreateSADto,
   CreateUserDto,
   ICreateUserPayload,
   IEmailActivationPayload,
@@ -38,6 +39,34 @@ export class AuthService {
   ) {}
 
   private SALT: number = 10;
+
+  async createSA({
+    firstName,
+    lastName,
+    username,
+    email,
+    password,
+    roles,
+    status,
+  }: CreateSADto) {
+    const SAExists = await this.usersService.isSuperAdminPresent();
+    if (SAExists) throw new BadRequestException(`Link is not available`);
+    const saDto = {
+      firstName,
+      lastName,
+      username,
+      email,
+      password: await bcrypt.hash(password, this.SALT),
+      roles,
+      status,
+    };
+    try {
+      const sa = await this.usersService.createSA(saDto);
+      if (sa) return { statusCode: 201, message: 'SA created' };
+    } catch (error) {
+      throw new BadRequestException(`Link is not available`);
+    }
+  }
 
   async signup(
     createUserPayload: ICreateUserPayload,
