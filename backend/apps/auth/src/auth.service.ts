@@ -22,7 +22,6 @@ import {
   ChangePasswordDto,
   CreateSADto,
   CreateUserDto,
-  ICreateUserPayload,
   IEmailActivationPayload,
   UsersService,
 } from './users';
@@ -68,25 +67,20 @@ export class AuthService {
     }
   }
 
-  async signup(
-    createUserPayload: ICreateUserPayload,
-    createUserDto: CreateUserDto,
-  ) {
-    const { dependence } = createUserPayload;
-    const hasAdmin = await this.usersService.dependenceHasUsers(
-      createUserPayload,
-    );
-    let returnedUser: UserDocument;
-    if (!hasAdmin)
-      returnedUser = await this.usersService.create(dependence, {
+  async signup(user: UserDocument, createUserDto: CreateUserDto) {
+    let newUser;
+    if (user.roles.includes(UserRoles.SA)) {
+      newUser = await this.usersService.create({
         ...createUserDto,
         roles: [UserRoles.ADMINISTRATOR],
       });
-    else
-      returnedUser = await this.usersService.create(dependence, {
+    } else if (user.roles.includes(UserRoles.ADMINISTRATOR)) {
+      newUser = await this.usersService.create({
         ...createUserDto,
+        dependence: user.dependence,
       });
-    const { email, firstName } = returnedUser;
+    }
+    const { password, firstName, email } = newUser;
 
     const token = this.createNotificationToken(email);
     const uri = `${this.configService.get(
@@ -94,16 +88,20 @@ export class AuthService {
     )}/email-activation?token=${token}`;
     this.notificationsService.emit('notify_email', {
       email,
-      subject: 'Validate your email to activate your account',
+      subject: 'Valida tu email e ingresa a Yurumi',
       text: `
-      Dear ${firstName},\n
-      Please click below to confirm your account:\n
-      
+      Estimado/a ${firstName},\n
+      Por favor haga click en el enlace para confirmar su correo electrónico:\n
+
         * ${uri}\n
-      
-      This link has a duration of 72 hours. After that you will need to contact
-        with your admin.\n
-      If you did not request this email you can safely ignore it.\n
+
+      Éste enlace tiene una duración de 72 hs. tras lo cual deberá comunicarse con el administrador para obtener otro.\n
+
+      Luego puede ingresar a la plataforma con las siguientes credenciales:
+        * usuario: <su email>
+        * clave: ${password}
+
+      Si usted no solicito éste email tan solo ignorelo.\n
       `,
     });
 

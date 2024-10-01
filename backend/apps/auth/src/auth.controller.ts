@@ -24,7 +24,6 @@ import {
   ChangePasswordDto,
   CreateSADto,
   CreateUserDto,
-  ICreateUserPayload,
   IEmailActivationPayload,
 } from './users';
 import { JwtAuthGuard, LocalAuthGuard, RefreshTokenGuard } from './guards';
@@ -86,6 +85,7 @@ export class AuthController {
     return { firstName, lastName, email, dependence, roles };
   }
 
+  @UseGuards(JwtAuthGuard)
   @Post('signup')
   @ApiOperation({ summary: 'Create a new user' })
   @ApiResponse({
@@ -112,20 +112,12 @@ export class AuthController {
         'lastName should not be empty',
         'lastName must be a string',
         'email must be an email',
-        'password is not strong enough',
-        'roles must contain at least 1 elements',
-        'each value in roles must be one of the following values: ADMINISTRATIVE, PROFESSIONAL, PATIENT, TECHNICIAN, DIRECTIVE',
-        'roles must be an array',
       ],
       error: 'Bad Request',
     },
   })
-  @ApiQuery({ name: 'dependence', type: String, required: true })
-  signup(
-    @Query() createUserPayload: ICreateUserPayload,
-    @Body() createUserDto: CreateUserDto,
-  ) {
-    return this.authService.signup(createUserPayload, createUserDto);
+  signup(@Req() request: Request, @Body() createUserDto: CreateUserDto) {
+    return this.authService.signup(request.user as UserDocument, createUserDto);
   }
 
   @Get('email-activation')

@@ -19,11 +19,11 @@ export class UserDocument extends AbstractDocument {
   @Prop()
   password: string;
 
-  @Prop()
-  dependence: string;
+  @Prop({required: false})
+  dependence?: string;
 
-  @Prop()
-  roles: string[];
+  @Prop({required: false})
+  roles?: string[];
 
   @Prop({ default: UserStatus.EMAIL_ACTIVATION_PENDING })
   status: string;

@@ -1,16 +1,14 @@
-import { ApiProperty } from '@nestjs/swagger';
 import {
-  ArrayMinSize,
   IsArray,
   IsEmail,
   IsEnum,
   IsNotEmpty,
   IsOptional,
   IsString,
-  IsStrongPassword,
 } from 'class-validator';
+import { ApiProperty } from '@nestjs/swagger';
 
-import { RestrictedRoles, UserRoles } from '@app/common';
+import { UserRoles } from '@app/common';
 
 export class CreateUserDto {
   @IsString()
@@ -32,16 +30,17 @@ export class CreateUserDto {
   @ApiProperty({ required: true, example: 'cristianquaglio@gmail.com' })
   email: string;
 
-  @IsStrongPassword()
-  @ApiProperty({ required: true, example: 'Admin123*1' })
-  password: string;
+  @IsString()
+  @IsOptional()
+  @ApiProperty({ required: true, example: '66e1f07fa148fc3fe843a5d3' })
+  dependence?: string;
 
   @IsArray()
-  @IsEnum(RestrictedRoles, { each: true })
-  @ArrayMinSize(1)
+  @IsEnum(UserRoles, { each: true })
+  @IsOptional()
   @ApiProperty({
     required: true,
     example: ['ADMINISTRATIVE'],
   })
-  roles: RestrictedRoles[] | UserRoles[];
+  roles?: UserRoles[];
 }

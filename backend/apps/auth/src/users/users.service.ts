@@ -5,7 +5,7 @@ import {
 } from '@nestjs/common';
 import * as bcrypt from 'bcryptjs';
 
-import { errorHandler, UserStatus } from '@app/common';
+import { errorHandler, generatePassword, UserStatus } from '@app/common';
 import {
   CreateUserDto,
   UpdateUserDto,
@@ -39,15 +39,17 @@ export class UsersService {
     });
   }
 
-  async create(dependence: string, createUserDto: CreateUserDto) {
-    return await this.usersRepository.create({
+  async create(createUserDto: CreateUserDto) {
+    const generatedPassword = generatePassword();
+    const newUser = await this.usersRepository.create({
       ...createUserDto,
-      dependence,
-      password: await bcrypt.hash(createUserDto.password, this.SALT),
+      password: await bcrypt.hash(generatedPassword, this.SALT),
       status: UserStatus.EMAIL_ACTIVATION_PENDING,
       isPasswordChanged: false,
       refreshToken: undefined,
     });
+    const { firstName, email } = newUser;
+    return { password: generatedPassword, firstName, email };
   }
 
   async getUser(getUserDto: GetUserDto) {
