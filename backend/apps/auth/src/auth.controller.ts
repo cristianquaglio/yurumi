@@ -87,6 +87,7 @@ export class AuthController {
 
   @UseGuards(JwtAuthGuard)
   @Post('signup')
+  @ApiCookieAuth()
   @ApiOperation({ summary: 'Create a new user' })
   @ApiResponse({
     status: 201,
