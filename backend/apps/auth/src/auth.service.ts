@@ -79,6 +79,8 @@ export class AuthService {
         ...createUserDto,
         dependence: user.dependence,
       });
+    } else {
+      throw new UnauthorizedException();
     }
     const { password, firstName, email } = newUser;
 
@@ -115,10 +117,10 @@ export class AuthService {
     if (user) {
       this.notificationsService.emit('notify_email', {
         email,
-        subject: 'Your email was validated successfully',
+        subject: 'Su email ha sido validado exitosamente',
         text: `
-        Dear ${user.firstName},\n
-        Your email was validated, now you can login.\n
+        Estimado/a ${user.firstName},\n
+        Su email ha sido validado. Ahora puede iniciar sesión en Yurumi.\n
         `,
       });
       return { statusCode: 200, message: 'User email confirmated' };
@@ -166,16 +168,16 @@ export class AuthService {
     });
     this.notificationsService.emit('notify_email', {
       email,
-      subject: 'Recover your account',
+      subject: 'Recupera tu cuenta',
       text: `
-        Dear ${user.firstName},\n
-        Your new password has been generated automatically:\n
+        Estimado/a ${user.firstName},\n
+        Su nueva clave ha sido generada:\n
           * email: ${user.email}
         
-          * password: ${generatedPassword}\n
+          * clave: ${generatedPassword}\n
         
-        Do not share this values.\n
-        We suggest to change this value for another one more friendly for you.\n
+        No comparta estas credenciales.\n
+        Sugerimos cambiar luego la clave a una mas amigable para usted si así lo desea.\n
         `,
     });
     return {
