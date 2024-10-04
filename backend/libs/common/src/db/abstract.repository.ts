@@ -39,6 +39,7 @@ export abstract class AbstractRepository<TDocument extends AbstractDocument> {
       }
       return document;
     } catch (error) {
+      console.log({error})
       errorHandler(error);
       return undefined;
     }

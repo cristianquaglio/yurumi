@@ -74,6 +74,8 @@ export class DependencesController {
     return this.dependencesService.create(createDependenceDto);
   }
 
+  @UseGuards(JwtAuthGuard)
+  @Roles(UserRoles.SA)
   @Get()
   @ApiCookieAuth()
   @ApiOperation({ summary: 'List all dependences' })
@@ -109,6 +111,8 @@ export class DependencesController {
     return this.dependencesService.findAll();
   }
 
+  @UseGuards(JwtAuthGuard)
+  @Roles(UserRoles.SA)
   @Get(':id')
   @ApiCookieAuth()
   @ApiOperation({ summary: 'Get dependence by ID' })

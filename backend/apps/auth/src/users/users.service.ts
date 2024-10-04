@@ -15,7 +15,6 @@ import {
   CreateSADto,
 } from './dto';
 import { UsersRepository } from './users.repository';
-import { ICreateUserPayload } from './interfaces';
 
 @Injectable()
 export class UsersService {
@@ -102,8 +101,11 @@ export class UsersService {
     }
   }
 
-  async findAll(dependence: string) {
-    const users = await this.usersRepository.find({ dependence });
+  async findAll(dependence: string = undefined) {
+    const query = dependence ? { dependence } : {};
+
+    const users = await this.usersRepository.find(query);
+
     return users.map((user) => {
       return {
         _id: user._id,
@@ -117,8 +119,11 @@ export class UsersService {
     });
   }
 
-  async findOne(_id: string, dependence: string) {
-    const user = await this.usersRepository.findOne({ _id, dependence });
+  async findOne(_id: string, dependence: string = undefined) {
+    const query = dependence ? { _id, dependence } : { _id };
+
+    const user = await this.usersRepository.findOne(query);
+
     return {
       _id: user._id,
       firstName: user.firstName,
@@ -130,21 +135,16 @@ export class UsersService {
     };
   }
 
-  async dependenceHasUsers({ dependence }: ICreateUserPayload) {
+  async update(
+    _id: string,
+    updateUserDto: UpdateUserDto,
+    dependence: string = undefined,
+  ) {
+    const query = dependence ? { _id, dependence } : { _id };
     try {
-      await this.usersRepository.findOne({ dependence });
-    } catch (error) {
-      if (error?.response?.statusCode === 404) return false;
-    }
-    return true;
-  }
-
-  async update(_id: string, updateUserDto: UpdateUserDto, dependence: string) {
-    try {
-      const user = await this.usersRepository.findOneAndUpdate(
-        { _id, dependence },
-        { $set: updateUserDto },
-      );
+      const user = await this.usersRepository.findOneAndUpdate(query, {
+        $set: updateUserDto,
+      });
       return {
         _id: user._id,
         firstName: user.firstName,
@@ -167,7 +167,9 @@ export class UsersService {
     );
   }
 
-  async remove(_id: string, dependence: string) {
-    return await this.usersRepository.findOneAndDelete({ _id, dependence });
+  async remove(_id: string, dependence: string = undefined) {
+    const query = dependence ? { _id, dependence } : { _id };
+
+    return await this.usersRepository.findOneAndDelete(query);
   }
 }

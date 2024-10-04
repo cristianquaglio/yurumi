@@ -8,12 +8,10 @@ import {
   Delete,
   UseGuards,
   Req,
-  Query,
 } from '@nestjs/common';
 import {
   ApiCookieAuth,
   ApiOperation,
-  ApiQuery,
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
@@ -21,27 +19,14 @@ import {
 import { JwtAuthGuard, Roles, UserRoles } from '@app/common';
 import { UsersService } from './users.service';
 import { UpdateUserDto } from './dto';
-import { ICreateUserPayload } from './interfaces';
 
 @Controller('users')
 @ApiTags('Users')
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
-  @Get('check-admin')
-  @ApiOperation({ summary: 'Check if user is Admin' })
-  @ApiQuery({ name: 'dependence', type: String, required: true })
-  @ApiResponse({
-    status: 200,
-    description: 'OK',
-    example: true,
-  })
-  checkAdmin(@Query() createUserPayload: ICreateUserPayload) {
-    return this.usersService.dependenceHasUsers(createUserPayload);
-  }
-
   @UseGuards(JwtAuthGuard)
-  @Roles(UserRoles.ADMINISTRATOR)
+  @Roles(UserRoles.ADMINISTRATOR, UserRoles.SA)
   @Get()
   @ApiCookieAuth()
   @ApiOperation({ summary: 'List all users' })
@@ -66,7 +51,7 @@ export class UsersController {
 
   @Get(':id')
   @UseGuards(JwtAuthGuard)
-  @Roles(UserRoles.ADMINISTRATOR)
+  @Roles(UserRoles.ADMINISTRATOR, UserRoles.SA)
   @ApiCookieAuth()
   @ApiOperation({ summary: 'Get user by ID' })
   @ApiResponse({
@@ -97,7 +82,7 @@ export class UsersController {
 
   @Patch(':id')
   @UseGuards(JwtAuthGuard)
-  @Roles(UserRoles.ADMINISTRATOR)
+  @Roles(UserRoles.ADMINISTRATOR, UserRoles.SA)
   @ApiCookieAuth()
   @ApiOperation({ summary: 'Update user' })
   @ApiResponse({
@@ -146,7 +131,7 @@ export class UsersController {
 
   @Delete(':id')
   @UseGuards(JwtAuthGuard)
-  @Roles(UserRoles.ADMINISTRATOR)
+  @Roles(UserRoles.ADMINISTRATOR, UserRoles.SA)
   @ApiCookieAuth()
   @ApiOperation({ summary: 'Delete user' })
   @ApiResponse({
