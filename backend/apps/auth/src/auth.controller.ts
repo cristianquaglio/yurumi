@@ -7,6 +7,7 @@ import {
   Query,
   Req,
   Res,
+  UnauthorizedException,
   UseGuards,
 } from '@nestjs/common';
 import { MessagePattern, Payload } from '@nestjs/microservices';
@@ -58,34 +59,6 @@ export class AuthController {
   }
 
   @UseGuards(JwtAuthGuard)
-  @Get('current')
-  @ApiCookieAuth()
-  @ApiOperation({ summary: 'Get the current user' })
-  @ApiResponse({
-    status: 200,
-    description: 'OK',
-    example: {
-      firstName: 'Cristian',
-      lastName: 'Quagliozzi',
-      email: 'cristianquaglio@gmail.com',
-      dependence: '66d1d6d78cfc99e93c2f5f84',
-      roles: ['SA'],
-    },
-  })
-  @ApiResponse({
-    status: 401,
-    description: 'Unauthorized',
-    example: {
-      statusCode: 401,
-      message: 'Unauthorized',
-    },
-  })
-  getUser(@CurrentUSer() user: UserDocument) {
-    const { firstName, lastName, email, dependence, roles } = user;
-    return { firstName, lastName, email, dependence, roles };
-  }
-
-  @UseGuards(JwtAuthGuard)
   @Post('signup')
   @ApiCookieAuth()
   @ApiOperation({ summary: 'Create a new user' })
@@ -119,27 +92,6 @@ export class AuthController {
   })
   signup(@Req() request: Request, @Body() createUserDto: CreateUserDto) {
     return this.authService.signup(request.user as UserDocument, createUserDto);
-  }
-
-  @Get('email-activation')
-  @ApiOperation({ summary: 'Activate an account email' })
-  @ApiResponse({
-    status: 200,
-    description: 'User email confirmated',
-    example: { statusCode: 200, message: 'User email confirmated' },
-  })
-  @ApiResponse({
-    status: 400,
-    description: 'Email confirmation token broken or expired',
-    example: {
-      statusCode: 400,
-      message: 'Email confirmation token broken or expired',
-      error: 'Bad Request',
-    },
-  })
-  @ApiQuery({ name: 'token', type: String, required: true })
-  emailActivation(@Query() emailActivationPayload: IEmailActivationPayload) {
-    return this.authService.emailActivation(emailActivationPayload);
   }
 
   @UseGuards(LocalAuthGuard)
@@ -176,6 +128,56 @@ export class AuthController {
     let { statusCode, message } = await this.authService.login(user, response);
     message = 'User logged in';
     response.send({ statusCode, message });
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Get('current')
+  @ApiCookieAuth()
+  @ApiOperation({ summary: 'Get the current user' })
+  @ApiResponse({
+    status: 200,
+    description: 'OK',
+    example: {
+      firstName: 'Cristian',
+      lastName: 'Quagliozzi',
+      email: 'cristianquaglio@gmail.com',
+      dependence: '66d1d6d78cfc99e93c2f5f84',
+      roles: ['SA'],
+    },
+  })
+  @ApiResponse({
+    status: 401,
+    description: 'Unauthorized',
+    example: {
+      statusCode: 401,
+      message: 'Unauthorized',
+    },
+  })
+  getUser(@CurrentUSer() user: UserDocument) {
+    if (!user) throw new UnauthorizedException();
+    const { firstName, lastName, email, dependence, roles } = user;
+    return { firstName, lastName, email, dependence, roles };
+  }
+
+  @Get('email-activation')
+  @ApiOperation({ summary: 'Activate an account email' })
+  @ApiResponse({
+    status: 200,
+    description: 'User email confirmated',
+    example: { statusCode: 200, message: 'User email confirmated' },
+  })
+  @ApiResponse({
+    status: 400,
+    description: 'Email confirmation token broken or expired',
+    example: {
+      statusCode: 400,
+      message: 'Email confirmation token broken or expired',
+      error: 'Bad Request',
+    },
+  })
+  @ApiQuery({ name: 'token', type: String, required: true })
+  emailActivation(@Query() emailActivationPayload: IEmailActivationPayload) {
+    return this.authService.emailActivation(emailActivationPayload);
   }
 
   @UseGuards(JwtAuthGuard)
