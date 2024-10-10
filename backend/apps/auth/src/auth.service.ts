@@ -113,6 +113,11 @@ export class AuthService {
   async emailActivation(emailActivationPayload: IEmailActivationPayload) {
     const { token } = emailActivationPayload;
     const email = await this.extractEmailFromToken(token);
+    if (!email) {
+      throw new BadRequestException(
+        'Email confirmation token broken or expired',
+      );
+    }
     const user = await this.usersService.activateEmail(email);
     if (user) {
       this.notificationsService.emit('notify_email', {
@@ -125,6 +130,7 @@ export class AuthService {
       });
       return { statusCode: 200, message: 'User email confirmated' };
     }
+    throw new BadRequestException('User not found');
   }
 
   async login(user: UserDocument, response: Response): Promise<IApiResponse> {

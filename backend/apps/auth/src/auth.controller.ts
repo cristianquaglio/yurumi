@@ -176,8 +176,10 @@ export class AuthController {
     },
   })
   @ApiQuery({ name: 'token', type: String, required: true })
-  emailActivation(@Query() emailActivationPayload: IEmailActivationPayload) {
-    return this.authService.emailActivation(emailActivationPayload);
+  async emailActivation(
+    @Query() emailActivationPayload: IEmailActivationPayload,
+  ) {
+    return await this.authService.emailActivation(emailActivationPayload);
   }
 
   @UseGuards(JwtAuthGuard)

@@ -1,8 +1,8 @@
 import { Response, Request } from 'express';
 import {
   BadRequestException,
-  UnauthorizedException,
   ExecutionContext,
+  UnauthorizedException,
 } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import { JwtService } from '@nestjs/jwt';
@@ -86,13 +86,11 @@ describe('AuthController', () => {
 
       const createSAResponse = { statusCode: 201, message: 'SA created' };
 
-      // Mock the service createSA method
-      mockUserService.isSuperAdminPresent.mockResolvedValue(false); // Simular que no existe un SA
+      mockUserService.isSuperAdminPresent.mockResolvedValue(false);
       mockAuthService.createSA.mockResolvedValue(createSAResponse);
 
       const result = await authController.createSA(createSADto);
 
-      // Verificaciones
       expect(mockAuthService.createSA).toHaveBeenCalledWith(createSADto);
       expect(result).toEqual(createSAResponse);
     });
@@ -108,15 +106,12 @@ describe('AuthController', () => {
         username: 'test1',
       };
 
-      // Simular que ya existe un SA
-      mockUserService.isSuperAdminPresent.mockResolvedValue(true); // Simular que ya existe un SA
+      mockUserService.isSuperAdminPresent.mockResolvedValue(true);
 
-      // Mock the service createSA method to throw BadRequestException
       mockAuthService.createSA.mockRejectedValue(
         new BadRequestException(`Link is not available`),
       );
 
-      // Asegúrate de que se lanza la excepción correcta
       await expect(authController.createSA(createSADto)).rejects.toThrow(
         BadRequestException,
       );
@@ -142,12 +137,10 @@ describe('AuthController', () => {
 
       const signupResponse = { statusCode: 201, message: 'User created' };
 
-      // Mock the service signup method
       mockAuthService.signup.mockResolvedValue(signupResponse);
 
       const result = await authController.signup(request, createUserDto);
 
-      // Verificaciones
       expect(mockAuthService.signup).toHaveBeenCalledWith(
         request.user,
         createUserDto,
@@ -171,7 +164,6 @@ describe('AuthController', () => {
         username: 'test1',
       };
 
-      // Mock the service signup method to throw UnauthorizedException
       mockAuthService.signup.mockRejectedValue(new UnauthorizedException());
 
       await expect(
@@ -200,12 +192,10 @@ describe('AuthController', () => {
 
       const loginResponse = { statusCode: 200, message: 'User logged in' };
 
-      // Mock the service login method to return a successful response
       mockAuthService.login.mockResolvedValue(loginResponse);
 
       await authController.login(loginDto, user, response);
 
-      // Verificaciones
       expect(mockAuthService.login).toHaveBeenCalledWith(user, response);
       expect(response.send).toHaveBeenCalledWith({
         statusCode: 200,
@@ -230,7 +220,6 @@ describe('AuthController', () => {
         send: jest.fn(),
       } as unknown as Response;
 
-      // Mock the service login method to throw UnauthorizedException
       mockAuthService.login.mockRejectedValue(new UnauthorizedException());
 
       try {
@@ -242,61 +231,59 @@ describe('AuthController', () => {
     });
   });
 
-  // describe('getUser', () => {
-  //   let user: UserDocument;
+  describe('getUser', () => {
+    let user: UserDocument;
 
-  //   beforeEach(() => {
-  //     user = {
-  //       firstName: 'userName',
-  //       lastName: 'userLastname',
-  //       email: 'test@example.com',
-  //       dependence: '123456',
-  //       roles: ['USER'],
-  //     } as UserDocument; // Asegúrate de que esto sea de tipo UserDocument
-  //   });
+    beforeEach(() => {
+      user = {
+        firstName: 'Cristian',
+        lastName: 'Quagliozzi',
+        email: 'cristianquaglio@gmail.com',
+        dependence: '66d1d6d78cfc99e93c2f5f84',
+        roles: ['SA'],
+      } as UserDocument;
+    });
 
-  //   it('should return the current user', async () => {
-  //     // Simula el comportamiento de getUser en el servicio
-  //     mockAuthService.getUser.mockResolvedValue(user);
+    it('should return the current user', async () => {
+      mockAuthService.getUser.mockResolvedValue(user);
 
-  //     // Simula el contexto para el decorador
-  //     const mockContext = {
-  //       switchToHttp: () => ({
-  //         getRequest: () => ({
-  //           user, // Establece el usuario en la solicitud
-  //         }),
-  //       }),
-  //     } as unknown as ExecutionContext;
+      const mockContext = {
+        switchToHttp: () => ({
+          getRequest: () => ({
+            user,
+          }),
+        }),
+      } as unknown as ExecutionContext;
 
-  //     // Simulamos el guardia para que pase
-  //     jest
-  //       .spyOn(JwtAuthGuard.prototype, 'canActivate')
-  //       .mockImplementation(() => true);
+      jest
+        .spyOn(JwtAuthGuard.prototype, 'canActivate')
+        .mockImplementation(() => true);
 
-  //     // Llama al método del controlador pasando el contexto simulado
-  //     const result = await authController.getUser(
-  //       mockContext.switchToHttp().getRequest().user,
-  //     );
+      const result = await authController.getUser(
+        mockContext.switchToHttp().getRequest().user,
+      );
 
-  //     // Verificaciones
-  //     expect(mockAuthService.getUser).toHaveBeenCalledWith(user); // Verifica que se llame con el usuario correcto
-  //     expect(result).toEqual(user); // Verifica que el resultado sea el usuario
-  //   });
+      expect(result).toEqual({
+        firstName: 'Cristian',
+        lastName: 'Quagliozzi',
+        email: 'cristianquaglio@gmail.com',
+        dependence: '66d1d6d78cfc99e93c2f5f84',
+        roles: ['SA'],
+      });
+    });
 
-  //   it('should throw Unauthorized exception if user is not present', async () => {
-  //     // Simula el contexto sin usuario
-  //     const mockContext = {
-  //       switchToHttp: () => ({
-  //         getRequest: () => ({
-  //           user: null, // Simulamos que no hay usuario
-  //         }),
-  //       }),
-  //     } as unknown as ExecutionContext;
+    it('should throw UnauthorizedException if user is not present', () => {
+      const mockContext = {
+        switchToHttp: () => ({
+          getRequest: () => ({
+            user: null,
+          }),
+        }),
+      } as unknown as ExecutionContext;
 
-  //     // Llama al método del controlador
-  //     await expect(
-  //       authController.getUser(mockContext.switchToHttp().getRequest().user),
-  //     ).rejects.toThrow(UnauthorizedException); // Verifica que se lance la excepción
-  //   });
-  // });
+      expect(() => {
+        authController.getUser(mockContext.switchToHttp().getRequest().user);
+      }).toThrow(UnauthorizedException);
+    });
+  });
 });
