@@ -11,7 +11,12 @@ import { ConfigService } from '@nestjs/config';
 import { JwtAuthGuard, UserDocument, UserRoles } from '@app/common';
 import { AuthService } from './auth.service';
 import { AuthController } from './auth.controller';
-import { CreateSADto, CreateUserDto, UsersService } from './users';
+import {
+  ChangePasswordDto,
+  CreateSADto,
+  CreateUserDto,
+  UsersService,
+} from './users';
 import { LoginDto } from './dto/login.dto';
 
 describe('AuthController', () => {
@@ -284,6 +289,64 @@ describe('AuthController', () => {
       expect(() => {
         authController.getUser(mockContext.switchToHttp().getRequest().user);
       }).toThrow(UnauthorizedException);
+    });
+  });
+
+  describe('changePassword', () => {
+    it('should successfully change password', async () => {
+      const changePasswordDto: ChangePasswordDto = {
+        password: 'NewStrongPass123!',
+      };
+      const req = { user: { _id: 'user123' } } as any;
+
+      const expectedResponse = {
+        statusCode: 200,
+        message: 'Password changed successfully',
+      };
+      jest
+        .spyOn(authService, 'changePassword')
+        .mockResolvedValue(expectedResponse);
+
+      const result = await authController.changePassword(
+        changePasswordDto,
+        req,
+      );
+
+      expect(authService.changePassword).toHaveBeenCalledWith(
+        'user123',
+        changePasswordDto,
+      );
+      expect(result).toEqual(expectedResponse);
+    });
+
+    it('should throw UnauthorizedException if user is not active', async () => {
+      const changePasswordDto: ChangePasswordDto = {
+        password: 'NewStrongPass123!',
+      };
+      const req = { user: { _id: 'user123' } } as any;
+
+      jest
+        .spyOn(authService, 'changePassword')
+        .mockRejectedValue(new UnauthorizedException());
+
+      await expect(
+        authController.changePassword(changePasswordDto, req),
+      ).rejects.toThrow(UnauthorizedException);
+    });
+
+    it('should throw BadRequestException if password is the same', async () => {
+      const changePasswordDto: ChangePasswordDto = { password: 'OldPass123' };
+      const req = { user: { _id: 'user123' } } as any;
+
+      jest
+        .spyOn(authService, 'changePassword')
+        .mockRejectedValue(
+          new BadRequestException("Password can't be the same one"),
+        );
+
+      await expect(
+        authController.changePassword(changePasswordDto, req),
+      ).rejects.toThrow(BadRequestException);
     });
   });
 });
