@@ -7,7 +7,6 @@ import {
 import { Test, TestingModule } from '@nestjs/testing';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
-import * as httpMocks from 'node-mocks-http';
 
 import { JwtAuthGuard, UserDocument, UserRoles } from '@app/common';
 import { AuthService } from './auth.service';
@@ -16,6 +15,7 @@ import {
   ChangePasswordDto,
   CreateSADto,
   CreateUserDto,
+  IEmailActivationPayload,
   UsersService,
 } from './users';
 import { LoginDto } from './dto/login.dto';
@@ -27,28 +27,30 @@ describe('AuthController', () => {
   let usersService: UsersService;
 
   const mockAuthService = {
-    createSA: jest.fn(),
-    signup: jest.fn(),
-    login: jest.fn(),
-    getUser: jest.fn(),
-    emailActivation: jest.fn(),
     changePassword: jest.fn(),
-    refreshTokens: jest.fn(),
-    recoverAccount: jest.fn(),
-    logout: jest.fn(),
+    createSA: jest.fn(),
+    emailActivation: jest.fn(),
     getTokens: jest.fn(),
+    getUser: jest.fn(),
+    login: jest.fn(),
+    logout: jest.fn(),
+    recoverAccount: jest.fn(),
+    refreshTokens: jest.fn(),
+    signup: jest.fn(),
   };
 
   const mockUserService = {
-    getUser: jest.fn(),
-    getUserByEmail: jest.fn(),
     create: jest.fn(),
     createSA: jest.fn(),
+    getUser: jest.fn(),
+    getUserByEmail: jest.fn(),
     isSuperAdminPresent: jest.fn(),
+    updateCurrentUser: jest.fn(),
   };
 
   const mockJwtService = {
     sign: jest.fn(),
+    verify: jest.fn(),
   };
 
   const mockConfigService = {
@@ -89,6 +91,7 @@ describe('AuthController', () => {
 
   describe('createSA', () => {
     it('should create a super admin and return a success response', async () => {
+      // arrange
       const createSADto: CreateSADto = {
         firstName: 'Super',
         lastName: 'Admin',
@@ -98,19 +101,20 @@ describe('AuthController', () => {
         status: 'ACTIVE',
         username: 'test1',
       };
-
       const createSAResponse = { statusCode: 201, message: 'SA created' };
-
       mockUserService.isSuperAdminPresent.mockResolvedValue(false);
       mockAuthService.createSA.mockResolvedValue(createSAResponse);
 
+      // act
       const result = await authController.createSA(createSADto);
 
+      // assert
       expect(mockAuthService.createSA).toHaveBeenCalledWith(createSADto);
       expect(result).toEqual(createSAResponse);
     });
 
     it('should throw BadRequestException if SA already exists', async () => {
+      // arrange
       const createSADto: CreateSADto = {
         firstName: 'Super',
         lastName: 'Admin',
@@ -120,13 +124,12 @@ describe('AuthController', () => {
         status: 'ACTIVE',
         username: 'test1',
       };
-
       mockUserService.isSuperAdminPresent.mockResolvedValue(true);
-
       mockAuthService.createSA.mockRejectedValue(
         new BadRequestException(`Link is not available`),
       );
 
+      // act & assert
       await expect(authController.createSA(createSADto)).rejects.toThrow(
         BadRequestException,
       );
@@ -134,6 +137,7 @@ describe('AuthController', () => {
   });
 
   describe('signup', () => {
+    // arrange
     it('should create a new user and return a success response', async () => {
       const request = {
         user: {
@@ -142,20 +146,19 @@ describe('AuthController', () => {
           roles: [UserRoles.ADMINISTRATOR],
         },
       } as unknown as Request;
-
       const createUserDto: CreateUserDto = {
         firstName: 'Test',
         lastName: 'User',
         email: 'test@example.com',
         username: 'test1',
       };
-
       const signupResponse = { statusCode: 201, message: 'User created' };
-
       mockAuthService.signup.mockResolvedValue(signupResponse);
 
+      // act
       const result = await authController.signup(request, createUserDto);
 
+      // assert
       expect(mockAuthService.signup).toHaveBeenCalledWith(
         request.user,
         createUserDto,
@@ -164,6 +167,7 @@ describe('AuthController', () => {
     });
 
     it('should throw UnauthorizedException for non-admin user', async () => {
+      // arrange
       const request = {
         user: {
           _id: 'userId',
@@ -171,16 +175,15 @@ describe('AuthController', () => {
           roles: ['USER'],
         },
       } as unknown as Request;
-
       const createUserDto: CreateUserDto = {
         firstName: 'Test',
         lastName: 'User',
         email: 'test@example.com',
         username: 'test1',
       };
-
       mockAuthService.signup.mockRejectedValue(new UnauthorizedException());
 
+      // act & assert
       await expect(
         authController.signup(request, createUserDto),
       ).rejects.toThrow(UnauthorizedException);
@@ -189,28 +192,27 @@ describe('AuthController', () => {
 
   describe('login', () => {
     it('should call login and return the correct response', async () => {
+      // arrange
       const user = {
         _id: 'someUserId',
         email: 'test@example.com',
         roles: ['USER'],
       } as unknown as UserDocument;
-
       const loginDto: LoginDto = {
         email: 'test@example.com',
         password: 'password123',
       };
-
       const response = {
         cookie: jest.fn(),
         send: jest.fn(),
       } as unknown as Response;
-
       const loginResponse = { statusCode: 200, message: 'User logged in' };
-
       mockAuthService.login.mockResolvedValue(loginResponse);
 
+      // act
       await authController.login(loginDto, user, response);
 
+      // assert
       expect(mockAuthService.login).toHaveBeenCalledWith(user, response);
       expect(response.send).toHaveBeenCalledWith({
         statusCode: 200,
@@ -219,24 +221,23 @@ describe('AuthController', () => {
     });
 
     it('should return 401 when user login fails', async () => {
+      // arrange
       const user = {
         _id: 'someUserId',
         email: 'test@example.com',
         roles: ['USER'],
       } as unknown as UserDocument;
-
       const loginDto: LoginDto = {
         email: 'test@example.com',
         password: 'wrongpassword',
       };
-
       const response = {
         cookie: jest.fn(),
         send: jest.fn(),
       } as unknown as Response;
-
       mockAuthService.login.mockRejectedValue(new UnauthorizedException());
 
+      // act & assert
       try {
         await authController.login(loginDto, user, response);
       } catch (error) {
@@ -248,7 +249,6 @@ describe('AuthController', () => {
 
   describe('getUser', () => {
     let user: UserDocument;
-
     beforeEach(() => {
       user = {
         firstName: 'Cristian',
@@ -259,9 +259,9 @@ describe('AuthController', () => {
       } as UserDocument;
     });
 
-    it('should return the current user', async () => {
+    it('should return the current user', () => {
+      // arrange
       mockAuthService.getUser.mockResolvedValue(user);
-
       const mockContext = {
         switchToHttp: () => ({
           getRequest: () => ({
@@ -269,15 +269,16 @@ describe('AuthController', () => {
           }),
         }),
       } as unknown as ExecutionContext;
-
       jest
         .spyOn(JwtAuthGuard.prototype, 'canActivate')
         .mockImplementation(() => true);
 
-      const result = await authController.getUser(
+      // act
+      const result = authController.getUser(
         mockContext.switchToHttp().getRequest().user,
       );
 
+      // assert
       expect(result).toEqual({
         firstName: 'Cristian',
         lastName: 'Quagliozzi',
@@ -288,6 +289,7 @@ describe('AuthController', () => {
     });
 
     it('should throw UnauthorizedException if user is not present', () => {
+      // arrange
       const mockContext = {
         switchToHttp: () => ({
           getRequest: () => ({
@@ -296,19 +298,67 @@ describe('AuthController', () => {
         }),
       } as unknown as ExecutionContext;
 
+      // act & assert
       expect(() => {
         authController.getUser(mockContext.switchToHttp().getRequest().user);
       }).toThrow(UnauthorizedException);
     });
   });
 
+  describe('emailActivation', () => {
+    it('should return confirmation when email is activated successfully', async () => {
+      // arrange
+      const emailActivationPayload: IEmailActivationPayload = {
+        token: 'valid_token',
+      };
+      const expectedResult = {
+        statusCode: 200,
+        message: 'User email confirmated',
+      };
+      jest
+        .spyOn(authService, 'emailActivation')
+        .mockResolvedValue(expectedResult);
+
+      // act
+      const result = await authController.emailActivation(
+        emailActivationPayload,
+      );
+
+      // assert
+      expect(result).toEqual(expectedResult);
+      expect(authService.emailActivation).toHaveBeenCalledWith(
+        emailActivationPayload,
+      );
+    });
+
+    it('should throw BadRequestException when token is broken or expired', async () => {
+      // arrange
+      const emailActivationPayload: IEmailActivationPayload = {
+        token: 'invalid_token',
+      };
+      jest
+        .spyOn(authService, 'emailActivation')
+        .mockRejectedValue(
+          new BadRequestException('Email confirmation token broken or expired'),
+        );
+
+      // act & assert
+      await expect(
+        authController.emailActivation(emailActivationPayload),
+      ).rejects.toThrow(BadRequestException);
+      expect(authService.emailActivation).toHaveBeenCalledWith(
+        emailActivationPayload,
+      );
+    });
+  });
+
   describe('changePassword', () => {
     it('should successfully change password', async () => {
+      // arrange
       const changePasswordDto: ChangePasswordDto = {
         password: 'NewStrongPass123!',
       };
       const req = { user: { _id: 'user123' } } as any;
-
       const expectedResponse = {
         statusCode: 200,
         message: 'Password changed successfully',
@@ -317,11 +367,13 @@ describe('AuthController', () => {
         .spyOn(authService, 'changePassword')
         .mockResolvedValue(expectedResponse);
 
+      // act
       const result = await authController.changePassword(
         changePasswordDto,
         req,
       );
 
+      // assert
       expect(authService.changePassword).toHaveBeenCalledWith(
         'user123',
         changePasswordDto,
@@ -330,30 +382,32 @@ describe('AuthController', () => {
     });
 
     it('should throw UnauthorizedException if user is not active', async () => {
+      // arrange
       const changePasswordDto: ChangePasswordDto = {
         password: 'NewStrongPass123!',
       };
       const req = { user: { _id: 'user123' } } as any;
-
       jest
         .spyOn(authService, 'changePassword')
         .mockRejectedValue(new UnauthorizedException());
 
+      // act & assert
       await expect(
         authController.changePassword(changePasswordDto, req),
       ).rejects.toThrow(UnauthorizedException);
     });
 
     it('should throw BadRequestException if password is the same', async () => {
+      // arrange
       const changePasswordDto: ChangePasswordDto = { password: 'OldPass123' };
       const req = { user: { _id: 'user123' } } as any;
-
       jest
         .spyOn(authService, 'changePassword')
         .mockRejectedValue(
           new BadRequestException("Password can't be the same one"),
         );
 
+      // act & assert
       await expect(
         authController.changePassword(changePasswordDto, req),
       ).rejects.toThrow(BadRequestException);
@@ -361,63 +415,71 @@ describe('AuthController', () => {
   });
 
   describe('refreshTokens', () => {
-    // it('should set Authentication and RefreshToken cookies', async () => {
-    //   // Simulamos el objeto Response
-    //   const response = {
-    //     cookie: jest.fn(),
-    //   } as unknown as Response;
+    let mockRequest: Partial<Request>;
+    let mockResponse: Partial<Response>;
+    beforeEach(() => {
+      mockRequest = {
+        user: {
+          _id: 'user-id-123',
+        },
+      };
+      mockResponse = {
+        status: jest.fn().mockReturnThis(),
+        json: jest.fn().mockReturnThis(),
+        cookie: jest.fn().mockReturnThis(),
+      };
+    });
 
-    //   // Simulamos el _id del usuario y llamamos a la función refreshTokens
-    //   const _id = 'mockUserId';
-    //   await authService.refreshTokens(_id, response);
+    it('should refresh tokens and return status 200', async () => {
+      // arrange
+      const mockTokensResult = {
+        statusCode: 200,
+        message: 'Refresh token done',
+      };
+      jest
+        .spyOn(authService, 'refreshTokens')
+        .mockResolvedValue(mockTokensResult);
 
-    //   // Verificamos que se haya llamado res.cookie con los valores correctos
-    //   expect(response.cookie).toHaveBeenCalledWith(
-    //     'Authentication',
-    //     expect.any(String), // Si el accessToken es generado dinámicamente
-    //     {
-    //       httpOnly: true,
-    //       secure: false,
-    //       maxAge: 900000, // 15 minutos
-    //     },
-    //   );
+      // act
+      await authController.refreshTokens(
+        mockRequest as Request,
+        mockResponse as Response,
+      );
 
-    //   expect(response.cookie).toHaveBeenCalledWith(
-    //     'RefreshToken',
-    //     expect.any(String), // Si el refreshToken es generado dinámicamente
-    //     {
-    //       httpOnly: true,
-    //       secure: false,
-    //       maxAge: 604800000, // 7 días
-    //     },
-    //   );
-
-    //   expect(response.cookie).toHaveBeenCalledTimes(2);
-    // });
+      // assert
+      expect(authService.refreshTokens).toHaveBeenCalledWith(
+        mockRequest.user['_id'],
+        mockResponse,
+      );
+      expect(mockResponse.status).toHaveBeenCalledWith(200);
+      expect(mockResponse.json).toHaveBeenCalledWith(mockTokensResult);
+    });
 
     it('should throw UnauthorizedException if no refresh token is provided', async () => {
+      // arrange
       const req = { user: { _id: 'user123' } } as any;
       const res = { cookie: jest.fn() } as unknown as Response;
-
       jest
         .spyOn(authService, 'refreshTokens')
         .mockRejectedValue(
           new UnauthorizedException('No refresh token provided'),
         );
 
+      // act & assert
       await expect(authController.refreshTokens(req, res)).rejects.toThrow(
         UnauthorizedException,
       );
     });
 
     it('should throw UnauthorizedException if the refresh token is invalid', async () => {
+      // arrange
       const req = { user: { _id: 'user123' } } as any;
       const res = { cookie: jest.fn() } as any;
-
       jest
         .spyOn(authService, 'refreshTokens')
         .mockRejectedValue(new UnauthorizedException('Invalid refresh token'));
 
+      // act & assert
       await expect(authController.refreshTokens(req, res)).rejects.toThrow(
         UnauthorizedException,
       );
@@ -430,13 +492,14 @@ describe('AuthController', () => {
     };
 
     it('should return success message when account is recovered', async () => {
+      // arrange
       const result = {
         statusCode: 200,
         message: 'A email was sended to you with the new credentials',
       };
-
       mockAuthService.recoverAccount.mockResolvedValue(result);
 
+      // act & assert
       expect(await authController.recoverAccount(recoverAccountDto)).toEqual(
         result,
       );
@@ -446,10 +509,12 @@ describe('AuthController', () => {
     });
 
     it('should throw UnauthorizedException if user is not active', async () => {
+      // arrange
       mockAuthService.recoverAccount.mockRejectedValue(
         new UnauthorizedException('User is not active'),
       );
 
+      // act & assert
       await expect(
         authController.recoverAccount(recoverAccountDto),
       ).rejects.toThrow(UnauthorizedException);
@@ -459,11 +524,13 @@ describe('AuthController', () => {
     });
 
     it('should throw NotFoundException if document is not found', async () => {
+      // arrange
       mockAuthService.recoverAccount.mockRejectedValue({
         status: 404,
         message: 'Document was not found',
       });
 
+      // act & assert
       await expect(
         authController.recoverAccount(recoverAccountDto),
       ).rejects.toEqual({
@@ -474,35 +541,40 @@ describe('AuthController', () => {
   });
 
   describe('logout', () => {
-    let res;
-    let req;
+    let req: Request;
+    let res: Response;
 
     beforeEach(() => {
       res = {
         clearCookie: jest.fn(),
         sendStatus: jest.fn(),
-      };
+      } as unknown as Response;
 
       req = {
-        user: { _id: 'someUserId' }, // simulate req.user populated by JwtAuthGuard
-      };
+        user: { _id: 'someUserId' },
+      } as unknown as Request;
     });
 
     it('should call authService.logout and return status 200', async () => {
+      // arrange
       mockAuthService.logout.mockResolvedValue({
         statusCode: 200,
         message: 'User logged out',
       });
 
+      // act
       await authController.logout(req, res);
 
-      expect(mockAuthService.logout).toHaveBeenCalledWith(req.user._id);
+      // act & assert
+      expect(mockAuthService.logout).toHaveBeenCalledWith(req.user['_id']);
       expect(res.sendStatus).toHaveBeenCalledWith(200);
     });
 
     it('should handle errors in logout process', async () => {
-      mockAuthService.logout.mockRejectedValue(new Error('Logout failed')); // Simulamos un error
+      // arrange
+      mockAuthService.logout.mockRejectedValue(new Error('Logout failed'));
 
+      // act & assert
       await expect(authController.logout(req, res)).rejects.toThrow(
         'Logout failed',
       );
