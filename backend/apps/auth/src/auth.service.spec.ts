@@ -277,6 +277,10 @@ describe('AuthService', () => {
   });
 
   describe('private methods', () => {
+    beforeEach(() => {
+      jest.resetAllMocks();
+    });
+
     it('should generate access token', () => {
       const payload = { userId: 'userId' };
       mockJwtService.sign.mockReturnValue('accessToken');
