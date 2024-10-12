@@ -193,10 +193,9 @@ export class AuthService {
   }
 
   async logout(_id: string) {
-    const user = await this.usersService.updateCurrentUser(_id, {
+    return await this.usersService.updateCurrentUser(_id, {
       refreshToken: null,
     });
-    if (user) return { statusCode: 200, message: 'User logged out' };
   }
 
   private generateAccessToken(payload: any) {
@@ -211,7 +210,9 @@ export class AuthService {
     });
   }
 
-  private async getTokens(user: UserDocument) {
+  async getTokens(
+    user: UserDocument,
+  ): Promise<{ accessToken: string; refreshToken: string }> {
     const payload = {
       userId: user._id.toHexString(),
     };

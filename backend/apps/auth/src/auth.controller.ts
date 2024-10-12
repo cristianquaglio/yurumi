@@ -228,9 +228,9 @@ export class AuthController {
   @ApiCookieAuth()
   @ApiOperation({ summary: "Refresh user's token" })
   @ApiResponse({
-    status: 204,
+    status: 200,
     description: 'Refresh token done',
-    example: { statusCode: 204, message: 'Refresh token done' },
+    example: { statusCode: 200, message: 'Refresh token done' },
   })
   @ApiResponse({
     status: 401,
@@ -241,11 +241,15 @@ export class AuthController {
       error: 'Unauthorized',
     },
   })
-  refreshTokens(
+  async refreshTokens(
     @Req() request: Request,
     @Res({ passthrough: true }) response: Response,
   ) {
-    return this.authService.refreshTokens(request.user['_id'], response);
+    const result = await this.authService.refreshTokens(
+      request.user['_id'],
+      response,
+    );
+    response.status(result.statusCode).json(result);
   }
 
   @Post('recover-account')
@@ -301,10 +305,16 @@ export class AuthController {
       message: 'OK',
     },
   })
-  logout(@Res() res: Response) {
-    res.clearCookie('Authentication', { httpOnly: true, path: '/' });
-    res.clearCookie('RefreshToken', { httpOnly: true, path: '/' });
-    return res.sendStatus(200);
+  async logout(@Req() req: Request, @Res() res: Response) {
+    try {
+      const userId = req.user['_id'];
+      await this.authService.logout(userId);
+      res.clearCookie('Authentication', { httpOnly: true, path: '/' });
+      res.clearCookie('RefreshToken', { httpOnly: true, path: '/' });
+      return res.sendStatus(200);
+    } catch (error) {
+      throw new UnauthorizedException('Logout failed');
+    }
   }
 
   @UseGuards(JwtAuthGuard)
