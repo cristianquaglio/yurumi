@@ -9,20 +9,20 @@ import { UsersService } from './users';
 
 describe('AuthService', () => {
   let authService: AuthService;
-  let usersService: UsersService;
-  let jwtService: JwtService;
   let configService: ConfigService;
+  let jwtService: JwtService;
   let notificationsService: ClientProxy;
+  let usersService: UsersService;
 
   const mockUsersService = {
-    isSuperAdminPresent: jest.fn(),
-    createSA: jest.fn(),
-    create: jest.fn(),
     activateEmail: jest.fn(),
-    getUser: jest.fn(),
-    updateCurrentUser: jest.fn(),
-    getUserByEmail: jest.fn(),
     changePassword: jest.fn(),
+    create: jest.fn(),
+    createSA: jest.fn(),
+    getUser: jest.fn(),
+    getUserByEmail: jest.fn(),
+    isSuperAdminPresent: jest.fn(),
+    updateCurrentUser: jest.fn(),
   };
 
   const mockJwtService = {

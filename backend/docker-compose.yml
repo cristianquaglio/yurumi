@@ -16,6 +16,21 @@ services:
     restart: always
     depends_on:
       - db
+
+  auth-test: # Contenedor de pruebas para el microservicio auth
+    build:
+      context: .
+      dockerfile: ./apps/auth/Dockerfile
+      target: development
+    command: ['yarn', 'test:e2e'] # Comando para ejecutar las pruebas e2e
+    env_file:
+      - ./apps/auth/.env # Cargar las variables de entorno necesarias
+    volumes:
+      - .:/usr/src/app
+    restart: 'no' # No reiniciar este contenedor después de que se complete
+    depends_on:
+      - db # Asegúrate de que la base de datos esté lista
+
   patients:
     build:
       context: .
@@ -31,6 +46,7 @@ services:
     restart: always
     depends_on:
       - db
+
   notifications:
     build:
       context: .
@@ -42,6 +58,7 @@ services:
     volumes:
       - .:/usr/src/app
     restart: always
+
   db:
     image: mongo:latest
     volumes:
@@ -49,5 +66,6 @@ services:
     ports:
       - '27017:27017'
     restart: always
+
 volumes:
   mongo:
