@@ -127,7 +127,7 @@ export class AuthController {
   ) {
     let { statusCode, message } = await this.authService.login(user, response);
     message = 'User logged in';
-    response.send({ statusCode, message });
+    response.status(200).send({ statusCode, message });
   }
 
   @UseGuards(JwtAuthGuard)

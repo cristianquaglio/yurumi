@@ -17,19 +17,19 @@ services:
     depends_on:
       - db
 
-  auth-test: # Contenedor de pruebas para el microservicio auth
+  auth-test:
     build:
       context: .
       dockerfile: ./apps/auth/Dockerfile
       target: development
-    command: ['yarn', 'test:e2e'] # Comando para ejecutar las pruebas e2e
+    command: ['yarn', 'test:e2e']
     env_file:
-      - ./apps/auth/.env # Cargar las variables de entorno necesarias
+      - ./apps/auth/.env
     volumes:
       - .:/usr/src/app
-    restart: 'no' # No reiniciar este contenedor después de que se complete
+    restart: 'no'
     depends_on:
-      - db # Asegúrate de que la base de datos esté lista
+      - db
 
   patients:
     build:
